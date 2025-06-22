@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Test - Jewelry Work Order System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Advanced jsPDF loading with multiple fallbacks
+        window.jsPDFLoadAttempts = 0;
+        
+        function loadJsPDFTest() {
+            window.jsPDFLoadAttempts++;
+            console.log('Test page: Attempting to load jsPDF, attempt:', window.jsPDFLoadAttempts);
+            
+            const cdnUrls = [
+                'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+                'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js',
+                'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
+                'js/lib/jspdf.min.js'
+            ];
+            
+            if (window.jsPDFLoadAttempts <= cdnUrls.length) {
+                const script = document.createElement('script');
+                script.src = cdnUrls[window.jsPDFLoadAttempts - 1];
+                script.onload = function() {
+                    console.log('Test page: jsPDF loaded from:', script.src);
+                    updateStatus();
+                };
+                script.onerror = function() {
+                    console.log('Test page: Failed to load from:', script.src);
+                    setTimeout(loadJsPDFTest, 1000);
+                };
+                document.head.appendChild(script);
+            } else {
+                console.error('Test page: All jsPDF sources failed');
+                updateStatus();
+            }
+        }
+        
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof window.jsPDF === 'undefined') {
+                    loadJsPDFTest();
+                } else {
+                    updateStatus();
+                }
+            }, 500);
+        });
+
+        function updateStatus() {
+            const status = document.getElementById('status');
+            const testBtn = document.getElementById('testBtn');
+            
+            if (typeof window.jsPDF !== 'undefined') {
+                status.innerHTML = '<div style="color: green; font-weight: bold;">✅ jsPDF loaded successfully!</div>';
+                testBtn.disabled = false;
+                testBtn.style.opacity = '1';
+            } else {
+                status.innerHTML = '<div style="color: red; font-weight: bold;">❌ jsPDF failed to load</div>';
+                testBtn.disabled = true;
+                testBtn.style.opacity = '0.5';
+            }
+        }
+
+        function testPDF() {
+            if (typeof window.jsPDF === 'undefined') {
+                alert('jsPDF not available');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window;
+                const doc = new jsPDF();
+                
+                // Add content
+                doc.setFontSize(20);
+                doc.text('JEWELRY WORK ORDER - TEST', 20, 30);
+                
+                doc.setFontSize(12);
+                doc.text('Order Number: WO-TEST-001', 20, 50);
+                doc.text('Date: ' + new Date().toLocaleDateString(), 20, 60);
+                doc.text('Total Items: 2', 20, 70);
+                doc.text('Total Weight: 5.60g', 20, 80);
+                
+                doc.setFontSize(14);
+                doc.text('ORDER ITEMS', 20, 100);
+                
+                // Sample item
+                doc.setFontSize(10);
+                doc.text('1. KP001 - Textured gold hoop earrings', 20, 120);
+                doc.text('   Weight: 2.80g | Material: Gold | Quantity: 2', 25, 130);
+                doc.text('   Total Weight: 5.60g', 25, 140);
+                
+                // Save the PDF
+                doc.save('jewelry_work_order_test.pdf');
+                
+                document.getElementById('result').innerHTML = '<div style="color: green; font-weight: bold;">✅ PDF generated successfully!</div>';
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                document.getElementById('result').innerHTML = '<div style="color: red; font-weight: bold;">❌ PDF generation failed: ' + error.message + '</div>';
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        button:hover:not(:disabled) {
+            background: #0056b3;
+        }
+        button:disabled {
+            cursor: not-allowed;
+        }
+        #status, #result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔧 PDF Generation Test</h1>
+        <p>This page tests if the jsPDF library is working correctly.</p>
+        
+        <div id="status">
+            <div style="color: orange;">⏳ Loading jsPDF library...</div>
+        </div>
+        
+        <button id="testBtn" onclick="testPDF()" disabled style="opacity: 0.5;">
+            Generate Test PDF
+        </button>
+        
+        <div id="result"></div>
+        
+        <hr style="margin: 30px 0;">
+        
+        <p><strong>Instructions:</strong></p>
+        <ol style="text-align: left; max-width: 400px; margin: 0 auto;">
+            <li>Wait for the status to show "jsPDF loaded successfully"</li>
+            <li>Click "Generate Test PDF" button</li>
+            <li>If successful, a PDF will download</li>
+            <li>If this works, the main application PDF generation should work too</li>
+        </ol>
+        
+        <p style="margin-top: 30px;">
+            <a href="index.html" style="color: #007bff; text-decoration: none;">← Back to Main Application</a>
+        </p>
+    </div>
+</body>
+</html>

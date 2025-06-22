@@ -1,0 +1,258 @@
+/* Print-specific styles for work orders */
+@media print {
+    /* Reset print margins */
+    @page {
+        margin: 0.5in;
+        size: A4;
+    }
+
+    /* Hide non-essential elements */
+    .nav-tabs,
+    .order-actions,
+    .header-actions,
+    .form-group,
+    .card-header,
+    .btn,
+    button,
+    .modal,
+    .notification {
+        display: none !important;
+    }
+
+    /* Container adjustments */
+    .app-container {
+        box-shadow: none;
+        background: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-header {
+        background: white !important;
+        color: #333 !important;
+        padding: 1rem 0;
+        border-bottom: 2px solid #333;
+    }
+
+    .app-title {
+        color: #333 !important;
+        font-size: 1.8rem;
+    }
+
+    .app-subtitle {
+        color: #666 !important;
+        font-size: 0.9rem;
+    }
+
+    /* Tab content */
+    .tab-content {
+        padding: 0;
+    }
+
+    .tab-panel {
+        display: block !important;
+    }
+
+    /* Cards for print */
+    .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin-bottom: 1rem;
+        page-break-inside: avoid;
+    }
+
+    .card-content {
+        padding: 1rem;
+    }
+
+    /* Order summary */
+    .order-summary {
+        background: #f9f9f9 !important;
+        border: 1px solid #ccc;
+        margin: 1rem 0;
+        page-break-inside: avoid;
+    }
+
+    .summary-row {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    /* Order items */
+    .order-item {
+        border: 1px solid #ddd;
+        margin-bottom: 0.5rem;
+        padding: 0.75rem;
+        page-break-inside: avoid;
+        display: block;
+        background: white;
+    }
+
+    .item-details {
+        margin-bottom: 0.5rem;
+    }
+
+    .item-code {
+        font-weight: bold;
+        font-size: 1rem;
+        color: #333 !important;
+    }
+
+    .item-description {
+        font-size: 0.85rem;
+        color: #666;
+        margin: 0.25rem 0;
+    }
+
+    .item-specs {
+        font-size: 0.8rem;
+        color: #666;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .item-notes {
+        font-style: italic;
+        color: #666;
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Image placeholders */
+    .item-image {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc;
+        float: left;
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .item-image svg {
+        width: 20px;
+        height: 20px;
+        color: #999;
+    }
+
+    /* Quantity and totals */
+    .item-quantity,
+    .item-total {
+        font-weight: bold;
+        font-size: 0.9rem;
+        color: #333;
+        margin-top: 0.5rem;
+    }
+
+    /* Section titles */
+    .section-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 0.5rem;
+    }
+
+    /* Typography */
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #333;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #333 !important;
+    }
+
+    /* Ensure good contrast */
+    .total-weight {
+        color: #333 !important;
+        font-weight: bold;
+    }
+
+    /* Page breaks */
+    .card.order-card {
+        page-break-before: auto;
+        page-break-after: auto;
+        page-break-inside: avoid;
+    }
+
+    /* Print signature area */
+    .print-signature-area {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        page-break-inside: avoid;
+    }
+
+    .signature-field {
+        width: 45%;
+        text-align: center;
+        border-bottom: 1px solid #333;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Footer for print */
+    .print-footer {
+        position: fixed;
+        bottom: 0.5in;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 8pt;
+        color: #666;
+        border-top: 1px solid #ccc;
+        padding-top: 0.25rem;
+    }
+
+    /* Avoid breaking important content */
+    .order-summary,
+    .order-item,
+    .product-details {
+        page-break-inside: avoid;
+    }
+
+    /* Clean up grid layouts for print */
+    .order-grid {
+        display: block;
+    }
+
+    .form-row {
+        display: block;
+    }
+
+    /* Hide empty states */
+    .empty-order {
+        display: none !important;
+    }
+
+    /* Ensure SVG icons are visible */
+    svg {
+        color: #666 !important;
+        stroke: #666 !important;
+    }
+}
+
+/* Print preview styles (when user clicks print preview) */
+@media screen and (max-width: 8.5in) {
+    .print-preview .nav-tabs,
+    .print-preview .order-actions,
+    .print-preview .header-actions,
+    .print-preview .form-group,
+    .print-preview .btn,
+    .print-preview button {
+        display: none;
+    }
+
+    .print-preview {
+        background: white;
+        padding: 0.5in;
+        max-width: 8.5in;
+        margin: 0 auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+}

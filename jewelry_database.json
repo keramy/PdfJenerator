@@ -1,0 +1,542 @@
+{
+  "products": [
+    {
+      "code": "KP001",
+      "metalWeight": "2.80",
+      "stoneWeight": "0.00",
+      "totalWeight": "2.80",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Textured gold hoop earrings",
+      "image_ref": "page1_item1"
+    },
+    {
+      "code": "KP002", 
+      "metalWeight": "2.90",
+      "stoneWeight": "0.00",
+      "totalWeight": "2.90",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Ribbed gold hoop earrings",
+      "image_ref": "page1_item2"
+    },
+    {
+      "code": "KP003",
+      "metalWeight": "2.10",
+      "stoneWeight": "0.00",
+      "totalWeight": "2.10",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Chain-link gold hoop earrings",
+      "image_ref": "page1_item3"
+    },
+    {
+      "code": "KP004",
+      "metalWeight": "2.30",
+      "stoneWeight": "0.00",
+      "totalWeight": "2.30",
+      "material": "Gold", 
+      "type": "Hoop Earrings",
+      "description": "Small chain-link gold hoop earrings",
+      "image_ref": "page1_item4"
+    },
+    {
+      "code": "KP005",
+      "metalWeight": "3.50",
+      "stoneWeight": "0.00",
+      "totalWeight": "3.50",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Wide textured gold hoop earrings",
+      "image_ref": "page1_item5"
+    },
+    {
+      "code": "KP006",
+      "metalWeight": "2.30",
+      "stoneWeight": "0.25",
+      "totalWeight": "2.55",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Chain-link medium hoop earrings with small diamonds",
+      "image_ref": "page1_item6"
+    },
+    {
+      "code": "KP007",
+      "metalWeight": "3.15",
+      "stoneWeight": "0.00",
+      "totalWeight": "3.15",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Smooth large gold hoop earrings", 
+      "image_ref": "page1_item7"
+    },
+    {
+      "code": "KP008",
+      "metalWeight": "2.45",
+      "stoneWeight": "0.50",
+      "totalWeight": "2.95",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Twisted rope design hoop earrings with diamonds",
+      "image_ref": "page1_item8"
+    },
+    {
+      "code": "DR001",
+      "metalWeight": "4.20",
+      "stoneWeight": "1.50",
+      "totalWeight": "5.70",
+      "material": "Gold",
+      "type": "Ring",
+      "description": "Diamond solitaire engagement ring with 1.5ct center stone",
+      "image_ref": "ring_item1"
+    },
+    {
+      "code": "KP009",
+      "weight": "3.30",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Large smooth gold hoop earrings",
+      "image_ref": "page1_item9"
+    },
+    {
+      "code": "KP010",
+      "weight": "3.30",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Ridged gold hoop earrings",
+      "image_ref": "page1_item10"
+    },
+    {
+      "code": "KP011",
+      "weight": "3.00",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Decorative gold hoop earrings",
+      "image_ref": "page1_item11"
+    },
+    {
+      "code": "KP012",
+      "weight": "2.57",
+      "material": "Gold", 
+      "type": "Hoop Earrings",
+      "description": "Ornate gold hoop earrings",
+      "image_ref": "page1_item12"
+    },
+    {
+      "code": "KP013",
+      "weight": "3.65",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Wide ribbed gold hoop earrings",
+      "image_ref": "page1_item13"
+    },
+    {
+      "code": "KP014",
+      "weight": "3.15",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Medium smooth gold hoop earrings",
+      "image_ref": "page1_item14"
+    },
+    {
+      "code": "KP015",
+      "weight": "3.20",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Medium textured gold hoop earrings",
+      "image_ref": "page1_item15"
+    },
+    {
+      "code": "KP016",
+      "weight": "2.10",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Small smooth gold hoop earrings",
+      "image_ref": "page1_item16"
+    },
+    {
+      "code": "KP017",
+      "weight": "2.10",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Small chain-link design hoop earrings", 
+      "image_ref": "page1_item17"
+    },
+    {
+      "code": "KP018",
+      "weight": "2.70",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Medium chain-link hoop earrings",
+      "image_ref": "page1_item18"
+    },
+    {
+      "code": "KP019",
+      "weight": "3.70",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Decorative textured gold hoop earrings",
+      "image_ref": "page1_item19"
+    },
+    {
+      "code": "KP020",
+      "weight": "2.50",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Small decorative gold hoop earrings",
+      "image_ref": "page1_item20"
+    },
+    {
+      "code": "KP021",
+      "weight": "2.75",
+      "material": "Gold", 
+      "type": "Hoop Earrings",
+      "description": "Textured small gold hoop earrings",
+      "image_ref": "page2_item1"
+    },
+    {
+      "code": "KP022",
+      "weight": "2.80",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Chain-link curved hoop earrings",
+      "image_ref": "page2_item2"
+    },
+    {
+      "code": "KP023",
+      "weight": "2.85",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Rope design hoop earrings",
+      "image_ref": "page2_item3"
+    },
+    {
+      "code": "KP024",
+      "weight": "3.35",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Wide textured hoop earrings", 
+      "image_ref": "page2_item4"
+    },
+    {
+      "code": "KP025",
+      "weight": "2.85",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Twisted rope wide hoop earrings",
+      "image_ref": "page2_item5"
+    },
+    {
+      "code": "KP026",
+      "weight": "3.00",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Braided design hoop earrings",
+      "image_ref": "page2_item6"
+    },
+    {
+      "code": "KP027",
+      "weight": "2.90",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Striped pattern hoop earrings",
+      "image_ref": "page2_item7"
+    },
+    {
+      "code": "KP028",
+      "weight": "2.80",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Simple smooth hoop earrings",
+      "image_ref": "page2_item8"
+    },
+    {
+      "code": "KP029",
+      "weight": "2.10",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Oval chain-link hoop earrings",
+      "image_ref": "page2_item9"
+    },
+    {
+      "code": "KP030",
+      "weight": "1.50",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Turquoise teardrop stud earrings", 
+      "image_ref": "page2_item10"
+    },
+    {
+      "code": "KP031",
+      "weight": "2.00",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Turquoise ornate stud earrings",
+      "image_ref": "page2_item11"
+    },
+    {
+      "code": "KP032",
+      "weight": "1.15",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Turquoise oval stud earrings",
+      "image_ref": "page2_item12"
+    },
+    {
+      "code": "KP033",
+      "weight": "1.30",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Turquoise round stud earrings",
+      "image_ref": "page2_item13"
+    },
+    {
+      "code": "KP034",
+      "weight": "1.30",
+      "material": "Gold",
+      "type": "Stud Earrings", 
+      "description": "Ruby marquise stud earrings",
+      "image_ref": "page2_item14"
+    },
+    {
+      "code": "KP035",
+      "weight": "3.10",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Chain-link textured hoop earrings",
+      "image_ref": "page2_item15"
+    },
+    {
+      "code": "KP036",
+      "weight": "3.50",
+      "material": "Gold",
+      "type": "Drop Earrings",
+      "description": "Star charm drop earrings",
+      "image_ref": "page2_item16"
+    },
+    {
+      "code": "KP037",
+      "weight": "3.85",
+      "material": "Gold",
+      "type": "Drop Earrings",
+      "description": "Heart charm drop earrings",
+      "image_ref": "page2_item17"
+    },
+    {
+      "code": "KP038",
+      "weight": "3.80",
+      "material": "Gold",
+      "type": "Drop Earrings", 
+      "description": "Square charm drop earrings",
+      "image_ref": "page2_item18"
+    },
+    {
+      "code": "KP039",
+      "weight": "2.95",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Twisted pattern hoop earrings",
+      "image_ref": "page2_item19"
+    },
+    {
+      "code": "KP040",
+      "weight": "2.45",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Small braided hoop earrings",
+      "image_ref": "page2_item20"
+    },
+    {
+      "code": "KP041",
+      "weight": "3.50",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Pointed diamond-shaped hoop earrings",
+      "image_ref": "page3_item1"
+    },
+    {
+      "code": "KP042",
+      "weight": "3.60",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Oval patterned hoop earrings",
+      "image_ref": "page3_item2"
+    },
+    {
+      "code": "KP043",
+      "weight": "2.85",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Simple classic hoop earrings",
+      "image_ref": "page3_item3"
+    },
+    {
+      "code": "KP044",
+      "weight": "3.30",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Greek key pattern hoop earrings",
+      "image_ref": "page3_item4"
+    },
+    {
+      "code": "KP045",
+      "weight": "4.45",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Wide textured designer hoop earrings", 
+      "image_ref": "page3_item5"
+    },
+    {
+      "code": "KP046",
+      "weight": "4.40",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Screw design wide hoop earrings",
+      "image_ref": "page3_item6"
+    },
+    {
+      "code": "KP047",
+      "weight": "3.60",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Multi-screw pattern hoop earrings",
+      "image_ref": "page3_item7"
+    },
+    {
+      "code": "KP048",
+      "weight": "2.95",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Thin textured hoop earrings",
+      "image_ref": "page3_item8"
+    },
+    {
+      "code": "KP049",
+      "weight": "2.75",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Pavé diamond hoop earrings",
+      "image_ref": "page3_item9"
+    },
+    {
+      "code": "KP050",
+      "weight": "3.00",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Rope and stone accent hoop earrings",
+      "image_ref": "page3_item10"
+    },
+    {
+      "code": "KP051",
+      "weight": "1.95",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Rectangular geometric stud earrings",
+      "image_ref": "page3_item11"
+    },
+    {
+      "code": "KP052",
+      "weight": "2.10",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Small textured hoop earrings",
+      "image_ref": "page3_item12"
+    },
+    {
+      "code": "KP053",
+      "weight": "2.20",
+      "material": "Gold",
+      "type": "Stud Earrings", 
+      "description": "Rectangular bar stud earrings",
+      "image_ref": "page3_item13"
+    },
+    {
+      "code": "KP054",
+      "weight": "2.50",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Rectangular crystal-lined stud earrings",
+      "image_ref": "page3_item14"
+    },
+    {
+      "code": "KP055",
+      "weight": "1.10",
+      "material": "Gold",
+      "type": "Drop Earrings",
+      "description": "Small charm drop earrings",
+      "image_ref": "page3_item15"
+    },
+    {
+      "code": "KP056",
+      "weight": "2.30",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Ribbed modern hoop earrings",
+      "image_ref": "page3_item16"
+    },
+    {
+      "code": "KP057",
+      "weight": "3.905",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Floral pattern crystal hoop earrings",
+      "image_ref": "page3_item17"
+    },
+    {
+      "code": "KP058",
+      "weight": "1.90",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Crystal bar stud earrings",
+      "image_ref": "page3_item18"
+    },
+    {
+      "code": "KP059",
+      "weight": "2.30",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Faceted design hoop earrings",
+      "image_ref": "page3_item19"
+    },
+    {
+      "code": "KP060",
+      "weight": "2.90",
+      "material": "Gold",
+      "type": "Stud Earrings",
+      "description": "Emerald rectangular stud earrings",
+      "image_ref": "page3_item20"
+    },
+    {
+      "code": "KP061",
+      "weight": "2.55",
+      "material": "Gold",
+      "type": "Hoop Earrings", 
+      "description": "Emerald accent hoop earrings",
+      "image_ref": "page4_item1"
+    },
+    {
+      "code": "KP062",
+      "weight": "3.00",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Wide smooth hoop earrings",
+      "image_ref": "page4_item2"
+    },
+    {
+      "code": "KP063",
+      "weight": "3.50",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Textured ribbed hoop earrings",
+      "image_ref": "page4_item3"
+    },
+    {
+      "code": "KP064",
+      "weight": "4.00",
+      "material": "Gold",
+      "type": "Hoop Earrings",
+      "description": "Wide emerald accent hoop earrings",
+      "image_ref": "page4_item4"
+    }
+  ]
+}
