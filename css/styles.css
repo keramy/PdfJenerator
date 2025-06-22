@@ -5,6 +5,12 @@
     box-sizing: border-box;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: #fafbfc;
@@ -443,14 +449,17 @@ textarea.form-input {
 }
 
 .item-image {
-    width: 50px;
-    height: 50px;
-    background: #ffffff;
+    width: 60px !important;
+    height: 60px !important;
+    background: #f7fafc;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
+    overflow: hidden !important;
+    flex-shrink: 0;
+    position: relative;
 }
 
 .item-image svg {
@@ -460,10 +469,24 @@ textarea.form-input {
 }
 
 .item-thumbnail {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 6px;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 4px !important;
+    max-width: none !important;
+    max-height: none !important;
+    display: block !important;
+}
+
+/* All images in item containers */
+.item-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 4px !important;
+    max-width: none !important;
+    max-height: none !important;
+    display: block !important;
 }
 
 .item-details {
@@ -999,12 +1022,20 @@ svg.tab-icon,
     justify-content: center;
     border-bottom: 1px solid #e2e8f0;
     position: relative;
+    overflow: hidden;
 }
 
 .product-image svg {
     width: 48px;
     height: 48px;
     color: #6c757d;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px 6px 0 0;
 }
 
 .product-info {
