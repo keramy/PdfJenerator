@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(ls:*)",
+      "Bash(node:*)",
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(sudo apt-get:*)",
+      "Bash(sudo apt-get install:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)"
+    ],
+    "deny": []
+  }
+}
