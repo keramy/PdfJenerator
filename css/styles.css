@@ -35,8 +35,28 @@ body {
     background: #ffffff;
     color: #1a202c;
     padding: 1.5rem 2rem;
-    text-align: left;
     border-bottom: 1px solid #e2e8f0;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.company-branding {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.company-logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
+.company-info {
+    flex: 1;
 }
 
 .app-title {
@@ -50,6 +70,27 @@ body {
     font-size: 0.875rem;
     color: #718096;
     font-weight: 400;
+}
+
+/* Responsive header */
+@media (max-width: 768px) {
+    .company-branding {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .company-logo {
+        height: 50px;
+    }
+    
+    .app-title {
+        font-size: 1.5rem;
+    }
+    
+    .app-subtitle {
+        font-size: 0.8rem;
+    }
 }
 
 /* Navigation Tabs */

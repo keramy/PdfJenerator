@@ -147,18 +147,18 @@ class OrderManager {
         const itemNotes = notes.value.trim();
 
         if (!productCode) {
-            this.showError('Please enter a product code');
+            this.showError('Lütfen bir ürün kodu girin');
             return;
         }
 
         const product = productDatabase.searchByCode(productCode);
         if (!product) {
-            this.showError('Product code not found');
+            this.showError('Ürün kodu bulunamadı');
             return;
         }
 
         if (qty < 1 || qty > 999) {
-            this.showError('Quantity must be between 1 and 999');
+            this.showError('Miktar 1 ile 999 arasında olmalıdır');
             return;
         }
 
@@ -186,7 +186,7 @@ class OrderManager {
         this.renderOrderItems();
         this.clearForm();
         this.saveDraftOrder();
-        this.showSuccess(`Added ${qty}x ${product.code} to order`);
+        this.showSuccess(`${qty}x ${product.code} siparişe eklendi`);
     }
 
     removeItem(productCode) {
@@ -194,7 +194,7 @@ class OrderManager {
         this.updateOrderSummary();
         this.renderOrderItems();
         this.saveDraftOrder();
-        this.showSuccess('Item removed from order');
+        this.showSuccess('Öğe siparişten çıkarıldı');
     }
 
     updateQuantity(productCode, newQuantity) {
@@ -295,7 +295,7 @@ class OrderManager {
     clearOrder() {
         if (this.currentOrder.items.length === 0) return;
         
-        if (confirm('Are you sure you want to clear the current order?')) {
+        if (confirm('Mevcut siparişi temizlemek istediğinizden emin misiniz?')) {
             this.currentOrder.items = [];
             this.currentOrder.orderNumber = this.generateOrderNumber();
             this.currentOrder.date = new Date().toLocaleDateString();
@@ -310,7 +310,7 @@ class OrderManager {
             this.updateOrderSummary();
             this.renderOrderItems();
             this.clearDraftOrder();
-            this.showSuccess('Order cleared');
+            this.showSuccess('Sipariş temizlendi');
         }
     }
 
@@ -369,13 +369,13 @@ class OrderManager {
 
     generatePDF() {
         if (this.currentOrder.items.length === 0) {
-            this.showError('No items in order to generate PDF');
+            this.showError('PDF oluşturmak için siparişte öğe yok');
             return;
         }
 
         // Validate customer name before generating PDF
         if (!this.currentOrder.customerName) {
-            this.showError('Please enter customer name before generating PDF');
+            this.showError('PDF oluşturmadan önce lütfen müşteri adını girin');
             document.getElementById('customer-name').focus();
             return;
         }
@@ -385,14 +385,14 @@ class OrderManager {
             try {
                 const pdfGenerator = new PDFGenerator();
                 pdfGenerator.generateWorkOrder(this.currentOrder);
-                this.showSuccess('PDF generated successfully');
+                this.showSuccess('PDF başarıyla oluşturuldu');
                 
                 // Save to order history
                 this.saveToHistory();
                 return;
             } catch (error) {
                 console.error('jsPDF error:', error);
-                this.showError('jsPDF failed, trying alternative method...');
+                this.showError('jsPDF başarısız, alternatif yöntem deneniyor...');
             }
         }
 
@@ -401,7 +401,7 @@ class OrderManager {
             console.log('Using offline PDF generator');
             const offlinePdfGenerator = new OfflinePDFGenerator();
             offlinePdfGenerator.generateWorkOrder(this.currentOrder);
-            this.showSuccess('Work order opened in print-friendly format. Use your browser\'s "Print" or "Save as PDF" option.');
+            this.showSuccess('İş emri yazdırma dostu formatta açıldı. Tarayıcınızın "Yazdır" veya "PDF olarak kaydet" seçeneğini kullanın.');
             
             // Save to order history
             this.saveToHistory();
@@ -409,11 +409,11 @@ class OrderManager {
             console.error('Offline PDF error:', error);
             
             // Final fallback - show instructions
-            this.showError('PDF generation failed. Please use your browser\'s print function (Ctrl+P) to save the current page as PDF.');
+            this.showError('PDF oluşturma başarısız. Lütfen mevcut sayfayı PDF olarak kaydetmek için tarayıcınızın yazdırma fonksiyonunu (Ctrl+P) kullanın.');
             
             // Optionally show print dialog
             setTimeout(() => {
-                if (confirm('Would you like to open the print dialog now?')) {
+                if (confirm('Şimdi yazdırma penceresini açmak ister misiniz?')) {
                     window.print();
                 }
             }, 2000);
@@ -449,23 +449,23 @@ class OrderManager {
 
     loadDraft() {
         this.loadDraftOrder();
-        this.showSuccess('Draft loaded');
+        this.showSuccess('Taslak yüklendi');
     }
 
     saveToHistory() {
         if (typeof orderHistory !== 'undefined') {
             const savedOrder = orderHistory.addOrder(this.currentOrder);
             if (savedOrder) {
-                this.showSuccess('Order saved to history');
+                this.showSuccess('Sipariş geçmişe kaydedildi');
                 
                 // Ask user if they want to start a new order
                 setTimeout(() => {
-                    if (confirm('Order has been saved. Would you like to start a new order?')) {
+                    if (confirm('Sipariş kaydedildi. Yeni bir sipariş başlatmak ister misiniz?')) {
                         this.clearOrder();
                     }
                 }, 1000);
             } else {
-                this.showError('Failed to save order to history');
+                this.showError('Siparişi geçmişe kaydetme başarısız');
             }
         }
     }
@@ -476,25 +476,25 @@ class OrderManager {
         if (historyTab) {
             historyTab.click();
         } else {
-            this.showNotification('Order history not available', 'error');
+            this.showNotification('Sipariş geçmişi mevcut değil', 'error');
         }
     }
 
     loadOrderFromHistory(orderId) {
         if (typeof orderHistory === 'undefined') {
-            this.showError('Order history not available');
+            this.showError('Sipariş geçmişi mevcut değil');
             return;
         }
 
         const historicalOrder = orderHistory.getOrder(orderId);
         if (!historicalOrder) {
-            this.showError('Order not found');
+            this.showError('Sipariş bulunamadı');
             return;
         }
 
         // Confirm before loading
         if (this.currentOrder.items.length > 0) {
-            if (!confirm('Loading this order will replace your current order. Continue?')) {
+            if (!confirm('Bu siparişi yüklemek mevcut siparişinizi değiştirecek. Devam et?')) {
                 return;
             }
         }
@@ -525,7 +525,7 @@ class OrderManager {
             orderTab.click();
         }
         
-        this.showSuccess(`Loaded order from history (Original: ${historicalOrder.orderNumber})`);
+        this.showSuccess(`Sipariş geçmişten yüklendi (Orijinal: ${historicalOrder.orderNumber})`);
     }
 }
 

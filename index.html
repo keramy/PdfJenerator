@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jewelry Work Order Management System</title>
+    <title>LIZAR KUYUMCULUK İş Emri Sistemi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         // Multiple fallback jsPDF loading
@@ -83,8 +83,15 @@
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
-            <h1 class="app-title">Jewelry Work Order System</h1>
-            <p class="app-subtitle">Professional Work Order Generator with Product Management</p>
+            <div class="header-content">
+                <div class="company-branding">
+                    <img src="images/lizar-logo.png" alt="LIZAR KUYUMCULUK Logo" class="company-logo">
+                    <div class="company-info">
+                        <h1 class="app-title">LIZAR KUYUMCULUK</h1>
+                        <p class="app-subtitle">Profesyonel İş Emri Yönetim Sistemi</p>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <!-- Navigation Tabs -->
@@ -93,31 +100,31 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-                Orders
+                Siparişler
             </button>
             <button class="nav-tab" data-tab="products">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                 </svg>
-                Products
+                Ürünler
             </button>
             <button class="nav-tab" data-tab="customers">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6"/>
                 </svg>
-                Customers
+                Müşteriler
             </button>
             <button class="nav-tab" data-tab="history">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                History
+                Geçmiş
             </button>
             <button class="nav-tab" data-tab="reports">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 17v-6m3 6v-3m3 3v-9m-9 13h12a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                 </svg>
-                Reports
+                Raporlar
             </button>
         </nav>
 
@@ -126,19 +133,19 @@
             <!-- Orders Tab -->
             <section id="orders-tab" class="tab-panel active">
                 <div class="section-header">
-                    <h2 class="section-title">Create Work Order</h2>
+                    <h2 class="section-title">İş Emri Oluştur</h2>
                     <div class="header-actions">
                         <button class="btn btn-secondary" onclick="orderManager.loadDraft()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                             </svg>
-                            Load Draft
+                            Taslak Yükle
                         </button>
                         <button class="btn btn-secondary" onclick="orderManager.viewHistory()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            History
+                            Geçmiş
                         </button>
                     </div>
                 </div>
@@ -147,28 +154,28 @@
                     <!-- Product Selection Card -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Add Products</h3>
-                            <p class="card-subtitle">Search and add products to your work order</p>
+                            <h3 class="card-title">Ürün Ekle</h3>
+                            <p class="card-subtitle">İş emrinize ürün arayın ve ekleyin</p>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label class="form-label">Customer Name</label>
+                                <label class="form-label">Müşteri Adı</label>
                                 <input type="text" id="customer-name" class="form-input" 
-                                       placeholder="Enter customer name..."
+                                       placeholder="Müşteri adını girin..."
                                        autocomplete="off">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Product Code or Name</label>
+                                <label class="form-label">Ürün Kodu veya Adı</label>
                                 <div class="search-wrapper">
                                     <input type="text" id="product-search" class="form-input" 
-                                           placeholder="Enter code (e.g., KP001) or search by name..."
+                                           placeholder="Kod girin (örn. KP001) veya ada göre arayın..."
                                            autocomplete="off">
                                     <div id="search-results" class="search-results"></div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Quantity</label>
+                                    <label class="form-label">Miktar</label>
                                     <input type="number" id="quantity" class="form-input" 
                                            value="1" min="1" max="999">
                                 </div>
@@ -178,14 +185,14 @@
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M12 4v16m8-8H4"/>
                                         </svg>
-                                        Add to Order
+                                        Siparişe Ekle
                                     </button>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Notes (Optional)</label>
+                                <label class="form-label">Notlar (Opsiyonel)</label>
                                 <textarea id="item-notes" class="form-input" rows="2" 
-                                          placeholder="Add any special instructions..."></textarea>
+                                          placeholder="Özel talimatları ekleyin..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -193,8 +200,8 @@
                     <!-- Selected Product Preview -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Product Preview</h3>
-                            <p class="card-subtitle">Selected product details</p>
+                            <h3 class="card-title">Ürün Önizlemesi</h3>
+                            <p class="card-subtitle">Seçilen ürün detayları</p>
                         </div>
                         <div class="card-content">
                             <div id="product-preview" class="product-preview">
@@ -202,7 +209,7 @@
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    <p>Select a product to see preview</p>
+                                    <p>Önizleme için bir ürün seçin</p>
                                 </div>
                             </div>
                         </div>
@@ -212,8 +219,8 @@
                 <!-- Current Order -->
                 <div class="card order-card">
                     <div class="card-header">
-                        <h3 class="card-title">Current Work Order</h3>
-                        <p class="card-subtitle">Review and manage order items</p>
+                        <h3 class="card-title">Mevcut İş Emri</h3>
+                        <p class="card-subtitle">Sipariş öğelerini inceleyin ve yönetin</p>
                     </div>
                     <div class="card-content">
                         <div id="order-items" class="order-items">
@@ -221,32 +228,32 @@
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
-                                <p>No items added yet</p>
+                                <p>Henüz öğe eklenmedi</p>
                             </div>
                         </div>
                         <div class="order-summary" id="order-summary" style="display: none;">
                             <div class="summary-row">
-                                <span>Customer:</span>
+                                <span>Müşteri:</span>
                                 <span id="summary-customer">-</span>
                             </div>
                             <div class="summary-row">
-                                <span>Total Items:</span>
+                                <span>Toplam Öğe:</span>
                                 <span id="total-items">0</span>
                             </div>
                             <div class="summary-row">
-                                <span>Metal Weight:</span>
+                                <span>Metal Ağırlığı:</span>
                                 <span id="total-metal-weight">0.00g</span>
                             </div>
                             <div class="summary-row">
-                                <span>Stone Weight:</span>
+                                <span>Taş Ağırlığı:</span>
                                 <span id="total-stone-weight">0.00g</span>
                             </div>
                             <div class="summary-row">
-                                <span>Total Weight:</span>
+                                <span>Toplam Ağırlık:</span>
                                 <span id="total-weight">0.00g</span>
                             </div>
                             <div class="summary-row">
-                                <span>Order Date:</span>
+                                <span>Sipariş Tarihi:</span>
                                 <span id="order-date"></span>
                             </div>
                         </div>
@@ -257,20 +264,20 @@
                                     <polyline points="17,21 17,13 7,13 7,21"/>
                                     <polyline points="7,3 7,8 15,8"/>
                                 </svg>
-                                Save Draft
+                                Taslak Kaydet
                             </button>
                             <button class="btn btn-danger" onclick="orderManager.clearOrder()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
                                     <path d="M10 11v6M14 11v6"/>
                                 </svg>
-                                Clear Order
+                                Siparişi Temizle
                             </button>
                             <button class="btn btn-success" onclick="orderManager.generatePDF()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
-                                Generate PDF
+                                PDF Oluştur
                             </button>
                             <button class="btn btn-secondary" onclick="window.open('pdf-test.html', '_blank')" title="Test PDF functionality">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -294,25 +301,25 @@
             <!-- Products Tab -->
             <section id="products-tab" class="tab-panel">
                 <div class="section-header">
-                    <h2 class="section-title">Product Management</h2>
+                    <h2 class="section-title">Ürün Yönetimi</h2>
                     <div class="header-actions">
                         <button class="btn btn-primary" onclick="productManager.showAddProduct()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 4v16m8-8H4"/>
                             </svg>
-                            Add New Product
+                            Yeni Ürün Ekle
                         </button>
                         <button class="btn btn-secondary" onclick="productManager.importData()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                             </svg>
-                            Import
+                            İçe Aktar
                         </button>
                         <button class="btn btn-secondary" onclick="productManager.exportData()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
-                            Export
+                            Dışa Aktar
                         </button>
                     </div>
                 </div>
@@ -323,22 +330,22 @@
                         <div class="filter-row">
                             <div class="form-group">
                                 <input type="text" id="product-filter" class="form-input" 
-                                       placeholder="Search products...">
+                                       placeholder="Ürünleri ara...">
                             </div>
                             <div class="form-group">
                                 <select id="material-filter" class="form-select">
-                                    <option value="">All Materials</option>
-                                    <option value="Gold">Gold</option>
-                                    <option value="Silver">Silver</option>
-                                    <option value="Platinum">Platinum</option>
+                                    <option value="">Tüm Malzemeler</option>
+                                    <option value="Gold">Altın</option>
+                                    <option value="Silver">Gümüş</option>
+                                    <option value="Platinum">Platin</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <select id="type-filter" class="form-select">
-                                    <option value="">All Types</option>
-                                    <option value="Hoop Earrings">Hoop Earrings</option>
-                                    <option value="Stud Earrings">Stud Earrings</option>
-                                    <option value="Drop Earrings">Drop Earrings</option>
+                                    <option value="">Tüm Tipler</option>
+                                    <option value="Hoop Earrings">Halka Küpe</option>
+                                    <option value="Stud Earrings">Tıkalı Küpe</option>
+                                    <option value="Drop Earrings">Sarkık Küpe</option>
                                 </select>
                             </div>
                         </div>
@@ -347,38 +354,38 @@
 
                 <!-- Products Grid -->
                 <div class="products-grid" id="products-grid">
-                    <!-- Products will be loaded here dynamically -->
+                    <!-- Ürünler dinamik olarak yüklenecek -->
                 </div>
             </section>
 
             <!-- Customers Tab -->
             <section id="customers-tab" class="tab-panel">
-                <!-- Customer management content will be loaded by customerManager.js -->
+                <!-- Müşteri yönetimi içeriği customerManager.js tarafından yüklenecek -->
             </section>
 
             <!-- History Tab -->
             <section id="history-tab" class="tab-panel">
-                <!-- History content will be loaded by historyView.js -->
+                <!-- Geçmiş içeriği historyView.js tarafından yüklenecek -->
             </section>
 
             <!-- Reports Tab -->
             <section id="reports-tab" class="tab-panel">
                 <div class="section-header">
-                    <h2 class="section-title">Reports & Analytics</h2>
+                    <h2 class="section-title">Raporlar ve Analitik</h2>
                 </div>
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Coming Soon</h3>
-                        <p class="card-subtitle">Analytics and reporting features will be available soon</p>
+                        <h3 class="card-title">Yakında</h3>
+                        <p class="card-subtitle">Analitik ve raporlama özellikleri yakında kullanıma sunulacak</p>
                     </div>
                     <div class="card-content">
-                        <p>Future features will include:</p>
+                        <p>Gelecekteki özellikler şunları içerecek:</p>
                         <ul class="feature-list">
-                            <li>✅ Order history and statistics (Available in History tab)</li>
-                            <li>Product popularity reports</li>
-                            <li>Material usage tracking</li>
-                            <li>Customer order patterns</li>
-                            <li>Export reports to Excel</li>
+                            <li>✅ Sipariş geçmişi ve istatistikleri (Geçmiş sekmesinde mevcut)</li>
+                            <li>Ürün popülerlik raporları</li>
+                            <li>Malzeme kullanım takibi</li>
+                            <li>Müşteri sipariş desenleri</li>
+                            <li>Raporları Excel'e aktarma</li>
                         </ul>
                     </div>
                 </div>
@@ -391,7 +398,7 @@
     <div id="product-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="modal-title">Add New Product</h3>
+                <h3 class="modal-title" id="modal-title">Yeni Ürün Ekle</h3>
                 <button class="modal-close" onclick="productManager.closeModal()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6L6 18M6 6l12 12"/>
@@ -402,61 +409,61 @@
                 <form id="product-form">
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Product Code*</label>
+                            <label class="form-label">Ürün Kodu*</label>
                             <input type="text" id="product-code" class="form-input" required 
-                                   placeholder="e.g., KP001">
+                                   placeholder="örn. KP001">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Metal Weight (grams)*</label>
+                            <label class="form-label">Metal Ağırlığı (gram)*</label>
                             <input type="number" id="product-metal-weight" class="form-input" required 
-                                   step="0.01" min="0.01" placeholder="e.g., 2.80">
+                                   step="0.01" min="0.01" placeholder="örn. 2.80">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Stone Weight (grams)</label>
+                            <label class="form-label">Taş Ağırlığı (gram)</label>
                             <input type="number" id="product-stone-weight" class="form-input" 
-                                   step="0.01" min="0" placeholder="e.g., 0.25">
-                            <small class="form-help">Leave empty if no stones</small>
+                                   step="0.01" min="0" placeholder="örn. 0.25">
+                            <small class="form-help">Taş yoksa boş bırakın</small>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Material*</label>
+                            <label class="form-label">Malzeme*</label>
                             <select id="product-material" class="form-select" required>
-                                <option value="">Select Material</option>
-                                <option value="Gold">Gold</option>
-                                <option value="Silver">Silver</option>
-                                <option value="Platinum">Platinum</option>
-                                <option value="Other">Other</option>
+                                <option value="">Malzeme Seçin</option>
+                                <option value="Gold">Altın</option>
+                                <option value="Silver">Gümüş</option>
+                                <option value="Platinum">Platin</option>
+                                <option value="Other">Diğer</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Type*</label>
+                            <label class="form-label">Tip*</label>
                             <select id="product-type" class="form-select" required>
-                                <option value="">Select Type</option>
-                                <option value="Hoop Earrings">Hoop Earrings</option>
-                                <option value="Stud Earrings">Stud Earrings</option>
-                                <option value="Drop Earrings">Drop Earrings</option>
-                                <option value="Necklace">Necklace</option>
-                                <option value="Bracelet">Bracelet</option>
-                                <option value="Ring">Ring</option>
-                                <option value="Other">Other</option>
+                                <option value="">Tip Seçin</option>
+                                <option value="Hoop Earrings">Halka Küpe</option>
+                                <option value="Stud Earrings">Tıkalı Küpe</option>
+                                <option value="Drop Earrings">Sarkık Küpe</option>
+                                <option value="Necklace">Kolye</option>
+                                <option value="Bracelet">Bilezik</option>
+                                <option value="Ring">Yüzük</option>
+                                <option value="Other">Diğer</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Description*</label>
+                        <label class="form-label">Açıklama*</label>
                         <textarea id="product-description" class="form-input" required rows="3" 
-                                  placeholder="Enter product description..."></textarea>
+                                  placeholder="Ürün açıklamasını girin..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Product Image</label>
+                        <label class="form-label">Ürün Resmi</label>
                         <div class="image-upload-area">
                             <input type="file" id="product-image" accept="image/*" style="display: none;">
                             <div id="image-preview" class="image-preview" onclick="document.getElementById('product-image').click()">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 4v16m8-8H4"/>
                                 </svg>
-                                <p>Click to upload image</p>
+                                <p>Resim yüklemek için tıklayın</p>
                             </div>
                         </div>
                     </div>
@@ -467,13 +474,13 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
-                    Cancel
+                    İptal
                 </button>
                 <button class="btn btn-primary" onclick="productManager.saveProduct()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 6L9 17l-5-5"/>
                     </svg>
-                    Save Product
+                    Ürünü Kaydet
                 </button>
             </div>
         </div>

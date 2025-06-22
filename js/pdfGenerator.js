@@ -44,13 +44,13 @@ class PDFGenerator {
     addHeader(orderData) {
         this.doc.setFontSize(24);
         this.doc.setFont('helvetica', 'bold');
-        this.doc.text('JEWELRY WORK ORDER', this.pageWidth / 2, this.currentY, { align: 'center' });
+        this.doc.text('LIZAR KUYUMCULUK İŞ EMRİ', this.pageWidth / 2, this.currentY, { align: 'center' });
         
         this.currentY += 15;
         
         this.doc.setFontSize(12);
         this.doc.setFont('helvetica', 'normal');
-        this.doc.text('Professional Jewelry Manufacturing', this.pageWidth / 2, this.currentY, { align: 'center' });
+        this.doc.text('Profesyonel İş Emri Yönetim Sistemi', this.pageWidth / 2, this.currentY, { align: 'center' });
         
         this.currentY += 20;
         
@@ -63,17 +63,17 @@ class PDFGenerator {
         this.doc.setFontSize(12);
         this.doc.setFont('helvetica', 'bold');
         
-        this.doc.text(`Order Number: ${orderData.orderNumber}`, this.margin, this.currentY);
-        this.doc.text(`Date: ${orderData.date}`, this.pageWidth - this.margin - 50, this.currentY);
+        this.doc.text(`Sipariş No: ${orderData.orderNumber}`, this.margin, this.currentY);
+        this.doc.text(`Tarih: ${orderData.date}`, this.pageWidth - this.margin - 50, this.currentY);
         
         this.currentY += 10;
         
-        this.doc.text(`Customer: ${orderData.customerName || 'Not specified'}`, this.margin, this.currentY);
+        this.doc.text(`Müşteri: ${orderData.customerName || 'Belirtilmemiş'}`, this.margin, this.currentY);
         
         this.currentY += 10;
         
-        this.doc.text(`Total Items: ${orderData.totalItems}`, this.margin, this.currentY);
-        this.doc.text(`Total Weight: ${orderData.totalWeight.toFixed(2)}g`, this.pageWidth - this.margin - 50, this.currentY);
+        this.doc.text(`Toplam Öğe: ${orderData.totalItems}`, this.margin, this.currentY);
+        this.doc.text(`Toplam Ağırlık: ${orderData.totalWeight.toFixed(2)}g`, this.pageWidth - this.margin - 50, this.currentY);
         
         this.currentY += 15;
         
@@ -85,7 +85,7 @@ class PDFGenerator {
     addItems(items) {
         this.doc.setFontSize(14);
         this.doc.setFont('helvetica', 'bold');
-        this.doc.text('ORDER ITEMS', this.margin, this.currentY);
+        this.doc.text('SİPARİŞ ÖĞELERİ', this.margin, this.currentY);
         this.currentY += 15;
 
         items.forEach((item, index) => {
@@ -151,19 +151,19 @@ class PDFGenerator {
         this.doc.setFontSize(9);
         this.doc.setFont('helvetica', 'bold');
         this.doc.text(`Metal: ${item.metalWeight || item.weight || 0}g`, textStartX, textY);
-        this.doc.text(`Stone: ${item.stoneWeight ? item.stoneWeight + 'g' : 'None'}`, textStartX + 25, textY);
-        this.doc.text(`Material: ${item.material}`, textStartX + 50, textY);
-        this.doc.text(`Type: ${item.type}`, textStartX + 80, textY);
+        this.doc.text(`Taş: ${item.stoneWeight ? item.stoneWeight + 'g' : 'Yok'}`, textStartX + 25, textY);
+        this.doc.text(`Malzeme: ${item.material}`, textStartX + 50, textY);
+        this.doc.text(`Tip: ${item.type}`, textStartX + 80, textY);
 
         textY += 6;
-        this.doc.text(`Quantity: ${item.quantity}`, textStartX, textY);
-        this.doc.text(`Total Weight: ${((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2)}g`, textStartX + 35, textY);
+        this.doc.text(`Miktar: ${item.quantity}`, textStartX, textY);
+        this.doc.text(`Toplam Ağırlık: ${((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2)}g`, textStartX + 35, textY);
 
         if (item.notes) {
             textY += 6;
             this.doc.setFont('helvetica', 'italic');
             this.doc.setTextColor(100, 100, 100);
-            this.doc.text(`Notes: ${item.notes}`, textStartX, textY);
+            this.doc.text(`Notlar: ${item.notes}`, textStartX, textY);
         }
 
         this.currentY += itemHeight + 10;
@@ -184,31 +184,31 @@ class PDFGenerator {
         this.doc.setFontSize(14);
         this.doc.setFont('helvetica', 'bold');
         this.doc.setTextColor(0, 0, 0);
-        this.doc.text('ORDER SUMMARY', this.margin, this.currentY);
+        this.doc.text('SİPARİŞ ÖZETİ', this.margin, this.currentY);
         this.currentY += 15;
 
         this.doc.setFontSize(12);
-        this.doc.text(`Total Items: ${orderData.totalItems}`, this.margin, this.currentY);
+        this.doc.text(`Toplam Öğe: ${orderData.totalItems}`, this.margin, this.currentY);
         this.currentY += 8;
         
-        this.doc.text(`Metal Weight: ${orderData.totalMetalWeight.toFixed(2)}g`, this.margin, this.currentY);
-        this.doc.text(`Stone Weight: ${orderData.totalStoneWeight.toFixed(2)}g`, this.margin + 60, this.currentY);
+        this.doc.text(`Metal Ağırlığı: ${orderData.totalMetalWeight.toFixed(2)}g`, this.margin, this.currentY);
+        this.doc.text(`Taş Ağırlığı: ${orderData.totalStoneWeight.toFixed(2)}g`, this.margin + 60, this.currentY);
         this.currentY += 8;
         
-        this.doc.text(`Total Weight: ${orderData.totalWeight.toFixed(2)}g`, this.margin, this.currentY);
+        this.doc.text(`Toplam Ağırlık: ${orderData.totalWeight.toFixed(2)}g`, this.margin, this.currentY);
         this.currentY += 8;
 
-        this.doc.text(`Customer: ${orderData.customerName || 'Not specified'}`, this.margin, this.currentY);
+        this.doc.text(`Müşteri: ${orderData.customerName || 'Belirtilmemiş'}`, this.margin, this.currentY);
         this.currentY += 8;
         
-        this.doc.text(`Order Date: ${orderData.date}`, this.margin, this.currentY);
-        this.doc.text(`Order Number: ${orderData.orderNumber}`, this.margin + 60, this.currentY);
+        this.doc.text(`Sipariş Tarihi: ${orderData.date}`, this.margin, this.currentY);
+        this.doc.text(`Sipariş No: ${orderData.orderNumber}`, this.margin + 60, this.currentY);
         this.currentY += 15;
 
         this.doc.setFontSize(10);
         this.doc.setFont('helvetica', 'normal');
-        this.doc.text('Staff Signature: ________________________', this.margin, this.currentY);
-        this.doc.text('Date Completed: ________________________', this.margin + 80, this.currentY);
+        this.doc.text('Personel İmzası: ________________________', this.margin, this.currentY);
+        this.doc.text('Tamamlanma Tarihi: ________________________', this.margin + 80, this.currentY);
     }
 
     addFooter() {
@@ -218,10 +218,10 @@ class PDFGenerator {
         this.doc.setFont('helvetica', 'normal');
         this.doc.setTextColor(100, 100, 100);
         
-        this.doc.text('Generated by Jewelry Work Order System', this.pageWidth / 2, footerY, { align: 'center' });
+        this.doc.text('LIZAR KUYUMCULUK - İş Emri Yönetim Sistemi', this.pageWidth / 2, footerY, { align: 'center' });
         
         const now = new Date();
         const timestamp = now.toLocaleString();
-        this.doc.text(`Generated on: ${timestamp}`, this.pageWidth / 2, footerY + 5, { align: 'center' });
+        this.doc.text(`Oluşturulma Tarihi: ${timestamp}`, this.pageWidth / 2, footerY + 5, { align: 'center' });
     }
 }
