@@ -174,20 +174,20 @@ class OfflinePDFGenerator {
         </head>
         <body>
             <div class="header">
-                <h1>JEWELRY WORK ORDER</h1>
-                <p>Professional Jewelry Manufacturing</p>
+                <h1>LIZAR KUYUMCULUK İŞ EMRİ</h1>
+                <p>Profesyonel İş Emri Yönetim Sistemi</p>
             </div>
 
             <div class="order-info">
-                <div>Order Number: ${orderData.orderNumber}</div>
-                <div>Date: ${orderData.date}</div>
-                <div>Customer: ${orderData.customerName || 'Not specified'}</div>
-                <div>Total Items: ${orderData.totalItems}</div>
-                <div>Total Weight: ${orderData.totalWeight.toFixed(2)}g</div>
+                <div>Sipariş No: ${orderData.orderNumber}</div>
+                <div>Tarih: ${orderData.date}</div>
+                <div>Müşteri: ${orderData.customerName || 'Belirtilmemiş'}</div>
+                <div>Toplam Öğe: ${orderData.totalItems}</div>
+                <div>Toplam Ağırlık: ${orderData.totalWeight.toFixed(2)}g</div>
             </div>
 
             <div class="items-section">
-                <div class="items-title">ORDER ITEMS</div>
+                <div class="items-title">SİPARİŞ ÖĞELERİ</div>
                 ${orderData.items.map((item, index) => `
                     <div class="item">
                         <div class="item-image">
@@ -201,43 +201,46 @@ class OfflinePDFGenerator {
                             <div class="item-header">${index + 1}. ${item.code}</div>
                             <div class="item-description">${item.description}</div>
                             <div class="item-details">
-                                <div><strong>Weight:</strong> ${item.weight}g</div>
-                                <div><strong>Material:</strong> ${item.material}</div>
-                                <div><strong>Type:</strong> ${item.type}</div>
-                                <div><strong>Quantity:</strong> ${item.quantity}</div>
-                                <div><strong>Total Weight:</strong> ${(item.weight * item.quantity).toFixed(2)}g</div>
+                                <div><strong>Metal Ağırlığı:</strong> ${item.metalWeight || item.weight || 0}g</div>
+                                <div><strong>Taş Ağırlığı:</strong> ${item.stoneWeight ? item.stoneWeight + 'g' : 'Yok'}</div>
+                                <div><strong>Malzeme:</strong> ${item.material}</div>
+                                <div><strong>Tip:</strong> ${item.type}</div>
+                                <div><strong>Miktar:</strong> ${item.quantity}</div>
+                                <div><strong>Toplam Ağırlık:</strong> ${((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2)}g</div>
                                 <div></div>
                             </div>
-                            ${item.notes ? `<div class="item-notes"><strong>Notes:</strong> ${item.notes}</div>` : ''}
+                            ${item.notes ? `<div class="item-notes"><strong>Notlar:</strong> ${item.notes}</div>` : ''}
                         </div>
                     </div>
                 `).join('')}
             </div>
 
             <div class="summary">
-                <h3>ORDER SUMMARY</h3>
+                <h3>SİPARİŞ ÖZETİ</h3>
                 <div class="summary-grid">
-                    <div><strong>Customer:</strong> ${orderData.customerName || 'Not specified'}</div>
-                    <div><strong>Total Items:</strong> ${orderData.totalItems}</div>
-                    <div><strong>Total Weight:</strong> ${orderData.totalWeight.toFixed(2)}g</div>
-                    <div><strong>Order Date:</strong> ${orderData.date}</div>
-                    <div><strong>Order Number:</strong> ${orderData.orderNumber}</div>
+                    <div><strong>Müşteri:</strong> ${orderData.customerName || 'Belirtilmemiş'}</div>
+                    <div><strong>Toplam Öğe:</strong> ${orderData.totalItems}</div>
+                    <div><strong>Metal Ağırlığı:</strong> ${orderData.totalMetalWeight ? orderData.totalMetalWeight.toFixed(2) + 'g' : '0.00g'}</div>
+                    <div><strong>Taş Ağırlığı:</strong> ${orderData.totalStoneWeight ? orderData.totalStoneWeight.toFixed(2) + 'g' : '0.00g'}</div>
+                    <div><strong>Toplam Ağırlık:</strong> ${orderData.totalWeight.toFixed(2)}g</div>
+                    <div><strong>Sipariş Tarihi:</strong> ${orderData.date}</div>
+                    <div><strong>Sipariş No:</strong> ${orderData.orderNumber}</div>
                 </div>
             </div>
 
             <div class="signature-area">
                 <div>
                     <div class="signature-field"></div>
-                    <div>Staff Signature</div>
+                    <div>Personel İmzası</div>
                 </div>
                 <div>
                     <div class="signature-field"></div>
-                    <div>Date Completed</div>
+                    <div>Tamamlanma Tarihi</div>
                 </div>
             </div>
 
             <div class="footer">
-                <p>Generated by Jewelry Work Order System on ${new Date().toLocaleString()}</p>
+                <p>LIZAR KUYUMCULUK - İş Emri Yönetim Sistemi | Oluşturulma: ${new Date().toLocaleString()}</p>
             </div>
 
             <div class="no-print" style="margin-top: 30px; text-align: center;">
@@ -247,13 +250,13 @@ class OfflinePDFGenerator {
                         <path d="M6,18H4a2,2,0,0,1-2-2v-5a2,2,0,0,1,2-2H20a2,2,0,0,1,2,2v5a2,2,0,0,1-2,2H18" stroke-width="2"/>
                         <rect x="6" y="14" width="12" height="8" stroke-width="2"/>
                     </svg>
-                    Print/Save as PDF
+                    Yazdır / PDF Kaydet
                 </button>
                 <button onclick="window.close()" style="padding: 10px 20px; font-size: 14pt; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px; display: inline-flex; align-items: center; gap: 8px;">
                     <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    Close
+                    Kapat
                 </button>
             </div>
         </body>
