@@ -7,7 +7,7 @@
       "totalWeight": "2.80",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Textured gold hoop earrings",
+      "description": "Dokulu altın halka küpe",
       "image_ref": "page1_item1"
     },
     {
@@ -17,7 +17,7 @@
       "totalWeight": "2.90",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Ribbed gold hoop earrings",
+      "description": "Çizgili altın halka küpe",
       "image_ref": "page1_item2"
     },
     {
@@ -27,7 +27,7 @@
       "totalWeight": "2.10",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Chain-link gold hoop earrings",
+      "description": "Zincir desenli altın halka küpe",
       "image_ref": "page1_item3"
     },
     {
@@ -37,7 +37,7 @@
       "totalWeight": "2.30",
       "material": "Gold", 
       "type": "Hoop Earrings",
-      "description": "Small chain-link gold hoop earrings",
+      "description": "Küçük zincir desenli altın halka küpe",
       "image_ref": "page1_item4"
     },
     {
@@ -47,7 +47,7 @@
       "totalWeight": "3.50",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Wide textured gold hoop earrings",
+      "description": "Geniş dokulu altın halka küpe",
       "image_ref": "page1_item5"
     },
     {
@@ -57,7 +57,7 @@
       "totalWeight": "2.55",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Chain-link medium hoop earrings with small diamonds",
+      "description": "Küçük pırlantlı orta boy zincir desenli halka küpe",
       "image_ref": "page1_item6"
     },
     {
@@ -67,7 +67,7 @@
       "totalWeight": "3.15",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Smooth large gold hoop earrings", 
+      "description": "Düz büyük altın halka küpe", 
       "image_ref": "page1_item7"
     },
     {
@@ -77,7 +77,7 @@
       "totalWeight": "2.95",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Twisted rope design hoop earrings with diamonds",
+      "description": "Pırlantlı burmalı halat desenli halka küpe",
       "image_ref": "page1_item8"
     },
     {
@@ -87,7 +87,7 @@
       "totalWeight": "5.70",
       "material": "Gold",
       "type": "Ring",
-      "description": "Diamond solitaire engagement ring with 1.5ct center stone",
+      "description": "1.5 karat merkez taşlı pırlanta tek taşlı nişan yüzüğü",
       "image_ref": "ring_item1"
     },
     {
@@ -95,7 +95,7 @@
       "weight": "3.30",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Large smooth gold hoop earrings",
+      "description": "Büyük düz altın halka küpe",
       "image_ref": "page1_item9"
     },
     {
@@ -103,7 +103,7 @@
       "weight": "3.30",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Ridged gold hoop earrings",
+      "description": "Kabartmalı altın halka küpe",
       "image_ref": "page1_item10"
     },
     {
@@ -111,7 +111,7 @@
       "weight": "3.00",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Decorative gold hoop earrings",
+      "description": "Süslü altın halka küpe",
       "image_ref": "page1_item11"
     },
     {
@@ -119,7 +119,7 @@
       "weight": "2.57",
       "material": "Gold", 
       "type": "Hoop Earrings",
-      "description": "Ornate gold hoop earrings",
+      "description": "Süslü altın halka küpe",
       "image_ref": "page1_item12"
     },
     {
@@ -127,7 +127,7 @@
       "weight": "3.65",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Wide ribbed gold hoop earrings",
+      "description": "Geniş çizgili altın halka küpe",
       "image_ref": "page1_item13"
     },
     {
@@ -135,7 +135,7 @@
       "weight": "3.15",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Medium smooth gold hoop earrings",
+      "description": "Orta boy düz altın halka küpe",
       "image_ref": "page1_item14"
     },
     {
@@ -143,7 +143,7 @@
       "weight": "3.20",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Medium textured gold hoop earrings",
+      "description": "Orta boy dokulu altın halka küpe",
       "image_ref": "page1_item15"
     },
     {
@@ -151,7 +151,7 @@
       "weight": "2.10",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Small smooth gold hoop earrings",
+      "description": "Küçük düz altın halka küpe",
       "image_ref": "page1_item16"
     },
     {
@@ -159,7 +159,7 @@
       "weight": "2.10",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Small chain-link design hoop earrings", 
+      "description": "Küçük zincir desenli halka küpe", 
       "image_ref": "page1_item17"
     },
     {
@@ -167,7 +167,7 @@
       "weight": "2.70",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Medium chain-link hoop earrings",
+      "description": "Orta boy zincir desenli halka küpe",
       "image_ref": "page1_item18"
     },
     {
@@ -175,7 +175,7 @@
       "weight": "3.70",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Decorative textured gold hoop earrings",
+      "description": "Süslü dokulu altın halka küpe",
       "image_ref": "page1_item19"
     },
     {
@@ -183,7 +183,7 @@
       "weight": "2.50",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Small decorative gold hoop earrings",
+      "description": "Küçük süslü altın halka küpe",
       "image_ref": "page1_item20"
     },
     {
@@ -191,7 +191,7 @@
       "weight": "2.75",
       "material": "Gold", 
       "type": "Hoop Earrings",
-      "description": "Textured small gold hoop earrings",
+      "description": "Küçük dokulu altın halka küpe",
       "image_ref": "page2_item1"
     },
     {
@@ -199,7 +199,7 @@
       "weight": "2.80",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Chain-link curved hoop earrings",
+      "description": "Zincir desenli kavisli halka küpe",
       "image_ref": "page2_item2"
     },
     {
@@ -207,7 +207,7 @@
       "weight": "2.85",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Rope design hoop earrings",
+      "description": "Halat desenli halka küpe",
       "image_ref": "page2_item3"
     },
     {
@@ -215,7 +215,7 @@
       "weight": "3.35",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Wide textured hoop earrings", 
+      "description": "Geniş dokulu halka küpe", 
       "image_ref": "page2_item4"
     },
     {
@@ -223,7 +223,7 @@
       "weight": "2.85",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Twisted rope wide hoop earrings",
+      "description": "Burmalı halat geniş halka küpe",
       "image_ref": "page2_item5"
     },
     {
@@ -231,7 +231,7 @@
       "weight": "3.00",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Braided design hoop earrings",
+      "description": "Örgü desenli halka küpe",
       "image_ref": "page2_item6"
     },
     {
@@ -239,7 +239,7 @@
       "weight": "2.90",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Striped pattern hoop earrings",
+      "description": "Çizgili desenli halka küpe",
       "image_ref": "page2_item7"
     },
     {
@@ -247,7 +247,7 @@
       "weight": "2.80",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Simple smooth hoop earrings",
+      "description": "Sade düz halka küpe",
       "image_ref": "page2_item8"
     },
     {
@@ -255,7 +255,7 @@
       "weight": "2.10",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Oval chain-link hoop earrings",
+      "description": "Oval zincir desenli halka küpe",
       "image_ref": "page2_item9"
     },
     {
@@ -263,7 +263,7 @@
       "weight": "1.50",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Turquoise teardrop stud earrings", 
+      "description": "Turkuaz damla şeklinde tıkalı küpe", 
       "image_ref": "page2_item10"
     },
     {
@@ -271,7 +271,7 @@
       "weight": "2.00",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Turquoise ornate stud earrings",
+      "description": "Turkuaz süslü tıkalı küpe",
       "image_ref": "page2_item11"
     },
     {
@@ -279,7 +279,7 @@
       "weight": "1.15",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Turquoise oval stud earrings",
+      "description": "Turkuaz oval tıkalı küpe",
       "image_ref": "page2_item12"
     },
     {
@@ -287,7 +287,7 @@
       "weight": "1.30",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Turquoise round stud earrings",
+      "description": "Turkuaz yuvarlak tıkalı küpe",
       "image_ref": "page2_item13"
     },
     {
@@ -295,7 +295,7 @@
       "weight": "1.30",
       "material": "Gold",
       "type": "Stud Earrings", 
-      "description": "Ruby marquise stud earrings",
+      "description": "Yakut navette tıkalı küpe",
       "image_ref": "page2_item14"
     },
     {
@@ -303,7 +303,7 @@
       "weight": "3.10",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Chain-link textured hoop earrings",
+      "description": "Zincir desenli dokulu halka küpe",
       "image_ref": "page2_item15"
     },
     {
@@ -311,7 +311,7 @@
       "weight": "3.50",
       "material": "Gold",
       "type": "Drop Earrings",
-      "description": "Star charm drop earrings",
+      "description": "Yıldız figirlü sarkık küpe",
       "image_ref": "page2_item16"
     },
     {
@@ -319,7 +319,7 @@
       "weight": "3.85",
       "material": "Gold",
       "type": "Drop Earrings",
-      "description": "Heart charm drop earrings",
+      "description": "Kalp figirlü sarkık küpe",
       "image_ref": "page2_item17"
     },
     {
@@ -327,7 +327,7 @@
       "weight": "3.80",
       "material": "Gold",
       "type": "Drop Earrings", 
-      "description": "Square charm drop earrings",
+      "description": "Kare figirlü sarkık küpe",
       "image_ref": "page2_item18"
     },
     {
@@ -335,7 +335,7 @@
       "weight": "2.95",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Twisted pattern hoop earrings",
+      "description": "Burmalı desenli halka küpe",
       "image_ref": "page2_item19"
     },
     {
@@ -343,7 +343,7 @@
       "weight": "2.45",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Small braided hoop earrings",
+      "description": "Küçük örgü halka küpe",
       "image_ref": "page2_item20"
     },
     {
@@ -351,7 +351,7 @@
       "weight": "3.50",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Pointed diamond-shaped hoop earrings",
+      "description": "Sivri elmas şeklinde halka küpe",
       "image_ref": "page3_item1"
     },
     {
@@ -359,7 +359,7 @@
       "weight": "3.60",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Oval patterned hoop earrings",
+      "description": "Oval desenli halka küpe",
       "image_ref": "page3_item2"
     },
     {
@@ -367,7 +367,7 @@
       "weight": "2.85",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Simple classic hoop earrings",
+      "description": "Sade klasik halka küpe",
       "image_ref": "page3_item3"
     },
     {
@@ -375,7 +375,7 @@
       "weight": "3.30",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Greek key pattern hoop earrings",
+      "description": "Yunan anahtarı desenli halka küpe",
       "image_ref": "page3_item4"
     },
     {
@@ -383,7 +383,7 @@
       "weight": "4.45",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Wide textured designer hoop earrings", 
+      "description": "Geniş dokulu tasarım halka küpe", 
       "image_ref": "page3_item5"
     },
     {
@@ -391,7 +391,7 @@
       "weight": "4.40",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Screw design wide hoop earrings",
+      "description": "Vida desenli geniş halka küpe",
       "image_ref": "page3_item6"
     },
     {
@@ -399,7 +399,7 @@
       "weight": "3.60",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Multi-screw pattern hoop earrings",
+      "description": "Çok vida desenli halka küpe",
       "image_ref": "page3_item7"
     },
     {
@@ -407,7 +407,7 @@
       "weight": "2.95",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Thin textured hoop earrings",
+      "description": "İnce dokulu halka küpe",
       "image_ref": "page3_item8"
     },
     {
@@ -415,7 +415,7 @@
       "weight": "2.75",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Pavé diamond hoop earrings",
+      "description": "Pavé pırlanta halka küpe",
       "image_ref": "page3_item9"
     },
     {
@@ -423,7 +423,7 @@
       "weight": "3.00",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Rope and stone accent hoop earrings",
+      "description": "Halat ve taş aksentli halka küpe",
       "image_ref": "page3_item10"
     },
     {
@@ -431,7 +431,7 @@
       "weight": "1.95",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Rectangular geometric stud earrings",
+      "description": "Dikdörtgen geometrik tıkalı küpe",
       "image_ref": "page3_item11"
     },
     {
@@ -439,7 +439,7 @@
       "weight": "2.10",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Small textured hoop earrings",
+      "description": "Küçük dokulu halka küpe",
       "image_ref": "page3_item12"
     },
     {
@@ -447,7 +447,7 @@
       "weight": "2.20",
       "material": "Gold",
       "type": "Stud Earrings", 
-      "description": "Rectangular bar stud earrings",
+      "description": "Dikdörtgen çubuk tıkalı küpe",
       "image_ref": "page3_item13"
     },
     {
@@ -455,7 +455,7 @@
       "weight": "2.50",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Rectangular crystal-lined stud earrings",
+      "description": "Kristal dizili dikdörtgen tıkalı küpe",
       "image_ref": "page3_item14"
     },
     {
@@ -463,7 +463,7 @@
       "weight": "1.10",
       "material": "Gold",
       "type": "Drop Earrings",
-      "description": "Small charm drop earrings",
+      "description": "Küçük figir sarkık küpe",
       "image_ref": "page3_item15"
     },
     {
@@ -471,7 +471,7 @@
       "weight": "2.30",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Ribbed modern hoop earrings",
+      "description": "Çizgili modern halka küpe",
       "image_ref": "page3_item16"
     },
     {
@@ -479,7 +479,7 @@
       "weight": "3.905",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Floral pattern crystal hoop earrings",
+      "description": "Çiçek desenli kristal halka küpe",
       "image_ref": "page3_item17"
     },
     {
@@ -487,7 +487,7 @@
       "weight": "1.90",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Crystal bar stud earrings",
+      "description": "Kristal çubuk tıkalı küpe",
       "image_ref": "page3_item18"
     },
     {
@@ -495,7 +495,7 @@
       "weight": "2.30",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Faceted design hoop earrings",
+      "description": "Yüzlü tasarım halka küpe",
       "image_ref": "page3_item19"
     },
     {
@@ -503,7 +503,7 @@
       "weight": "2.90",
       "material": "Gold",
       "type": "Stud Earrings",
-      "description": "Emerald rectangular stud earrings",
+      "description": "Zümrüt dikdörtgen tıkalı küpe",
       "image_ref": "page3_item20"
     },
     {
@@ -511,7 +511,7 @@
       "weight": "2.55",
       "material": "Gold",
       "type": "Hoop Earrings", 
-      "description": "Emerald accent hoop earrings",
+      "description": "Zümrüt aksentli halka küpe",
       "image_ref": "page4_item1"
     },
     {
@@ -519,7 +519,7 @@
       "weight": "3.00",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Wide smooth hoop earrings",
+      "description": "Geniş düz halka küpe",
       "image_ref": "page4_item2"
     },
     {
@@ -527,7 +527,7 @@
       "weight": "3.50",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Textured ribbed hoop earrings",
+      "description": "Dokulu çizgili halka küpe",
       "image_ref": "page4_item3"
     },
     {
@@ -535,7 +535,7 @@
       "weight": "4.00",
       "material": "Gold",
       "type": "Hoop Earrings",
-      "description": "Wide emerald accent hoop earrings",
+      "description": "Geniş zümrüt aksentli halka küpe",
       "image_ref": "page4_item4"
     }
   ]
