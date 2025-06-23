@@ -10,6 +10,7 @@ class OrderManager {
         };
         this.loadDraftOrder();
         this.setupCustomerNameListener();
+        this.setupProductSearchListener();
     }
 
     generateOrderNumber() {
@@ -35,9 +36,19 @@ class OrderManager {
 
             customerNameInput.addEventListener('input', (e) => {
                 this.currentOrder.customerName = e.target.value.trim();
+                this.currentOrder.customerId = null; // Reset customer ID when typing
+                this.selectedCustomer = null; // Reset selected customer when typing
+                this.clearCustomerValidationError(); // Clear validation errors while typing
                 this.updateOrderSummary();
                 this.saveDraftOrder();
                 this.showCustomerSuggestions(e.target.value.trim());
+            });
+
+            customerNameInput.addEventListener('blur', (e) => {
+                // Validate customer name when user leaves the field
+                if (e.target.value.trim()) {
+                    this.validateCustomerName();
+                }
             });
 
             customerNameInput.addEventListener('focus', (e) => {
@@ -50,6 +61,32 @@ class OrderManager {
             document.addEventListener('click', (e) => {
                 if (!searchWrapper.contains(e.target)) {
                     this.hideCustomerSuggestions();
+                }
+            });
+        }
+    }
+
+    setupProductSearchListener() {
+        const productSearchInput = document.getElementById('product-search');
+        if (productSearchInput) {
+            // Clear any existing selected product data
+            this.selectedProduct = null;
+
+            productSearchInput.addEventListener('input', (e) => {
+                this.selectedProduct = null; // Reset selected product when typing
+                this.clearProductValidationError();
+                this.showProductSuggestions(e.target.value.trim());
+            });
+
+            productSearchInput.addEventListener('focus', (e) => {
+                this.showProductSuggestions(e.target.value.trim());
+            });
+
+            // Close suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                const searchWrapper = productSearchInput.parentElement;
+                if (!searchWrapper.contains(e.target)) {
+                    this.hideProductSuggestions();
                 }
             });
         }
@@ -71,12 +108,12 @@ class OrderManager {
         if (suggestions.length === 0) {
             resultsContainer.innerHTML = `
                 <div class="search-result-item no-results">
-                    <p>No customers found</p>
+                    <p>Müşteri bulunamadı</p>
                     <button class="btn btn-sm btn-primary" onclick="orderManager.addNewCustomer('${input}')">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6" "/>
                         </svg>
-                        Add "${input}" as new customer
+                        "${input}" olarak yeni müşteri ekle
                     </button>
                 </div>
             `;
@@ -106,6 +143,115 @@ class OrderManager {
         }
     }
 
+    showProductSuggestions(input) {
+        const resultsContainer = document.getElementById('search-results');
+        if (!resultsContainer || !window.productDatabase) {
+            return;
+        }
+
+        if (!input || input.length < 1) {
+            resultsContainer.style.display = 'none';
+            return;
+        }
+
+        const suggestions = productDatabase.getProductSuggestions(input);
+        
+        if (suggestions.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="search-result-item no-results">
+                    <p>Ürün bulunamadı</p>
+                    <span class="no-results-hint">Ürün kodu veya adını kontrol edin</span>
+                </div>
+            `;
+            resultsContainer.style.display = 'block';
+            return;
+        }
+
+        resultsContainer.innerHTML = suggestions.map(product => `
+            <div class="search-result-item product-result" onclick="orderManager.selectProductFromSearch('${product.code}')">
+                <div class="product-result-info">
+                    <div class="product-result-code">${product.code}</div>
+                    <div class="product-result-description">${product.description}</div>
+                    <div class="product-result-details">
+                        ${product.totalWeight || product.weight || 0}g | ${product.material}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        resultsContainer.style.display = 'block';
+    }
+
+    hideProductSuggestions() {
+        const resultsContainer = document.getElementById('search-results');
+        if (resultsContainer) {
+            resultsContainer.style.display = 'none';
+        }
+    }
+
+    selectProductFromSearch(productCode) {
+        const product = productDatabase.searchByCode(productCode);
+        if (product) {
+            const productSearchInput = document.getElementById('product-search');
+            productSearchInput.value = product.code;
+            this.selectedProduct = product;
+            this.clearProductValidationError();
+            this.hideProductSuggestions();
+            
+            // Show product preview
+            this.showProductPreview(product);
+        }
+    }
+
+    showProductPreview(product) {
+        const preview = document.getElementById('product-preview');
+        if (preview) {
+            preview.innerHTML = `
+                <div class="product-preview-container">
+                    <div class="preview-image">
+                        ${product.imageData ? `
+                            <img src="${product.imageData}" alt="${product.description}" />
+                        ` : `
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        `}
+                    </div>
+                    <div class="product-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Kod:</span>
+                            <span class="detail-value">${product.code}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Açıklama:</span>
+                            <span class="detail-value">${product.description}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Metal Ağırlığı:</span>
+                            <span class="detail-value">${product.metalWeight || product.weight || 0}g</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Taş Ağırlığı:</span>
+                            <span class="detail-value">${product.stoneWeight ? product.stoneWeight + 'g' : 'Yok'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Toplam Ağırlık:</span>
+                            <span class="detail-value">${product.totalWeight || product.weight || 0}g</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Malzeme:</span>
+                            <span class="detail-value">${product.material}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tip:</span>
+                            <span class="detail-value">${product.type}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
     selectCustomer(customerId) {
         const customer = customerDatabase.getCustomerById(customerId);
         if (customer) {
@@ -113,6 +259,7 @@ class OrderManager {
             customerNameInput.value = customer.name;
             this.currentOrder.customerName = customer.name;
             this.currentOrder.customerId = customer.id; // Store customer ID for reference
+            this.clearCustomerValidationError(); // Clear any validation errors
             this.updateOrderSummary();
             this.saveDraftOrder();
             this.hideCustomerSuggestions();
@@ -137,6 +284,178 @@ class OrderManager {
         }
     }
 
+    validateCustomerName() {
+        const customerNameInput = document.getElementById('customer-name');
+        const customerName = customerNameInput.value.trim();
+
+        // Clear any existing validation errors
+        this.clearCustomerValidationError();
+
+        // Check if customer name is empty
+        if (!customerName) {
+            this.showCustomerValidationError('Müşteri adı boş olamaz');
+            return false;
+        }
+
+        // Check if customer exists in database
+        const existingCustomer = customerDatabase.getCustomerByName(customerName);
+        if (existingCustomer) {
+            // Check if the user has properly selected this customer
+            if (this.currentOrder.customerId === existingCustomer.id) {
+                return true; // Customer is properly selected
+            } else {
+                this.showCustomerValidationError(
+                    'Bu müşteri adı zaten mevcut. Listeden seçin veya farklı bir ad girin.',
+                    existingCustomer
+                );
+                return false;
+            }
+        } else {
+            // Customer doesn't exist - show error since we require selection from dropdown
+            this.showCustomerValidationError(
+                'Geçerli bir müşteri seçin veya yeni müşteri ekleyin'
+            );
+            return false;
+        }
+    }
+
+    showCustomerValidationError(message, existingCustomer = null) {
+        const customerNameInput = document.getElementById('customer-name');
+        const formGroup = customerNameInput.parentElement;
+        
+        // Remove any existing error message first
+        const existingError = formGroup.querySelector('.customer-validation-error');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        // Add error styling to input
+        customerNameInput.classList.add('error');
+        
+        // Create error message container
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'customer-validation-error';
+        errorDiv.innerHTML = `
+            <div class="error-message">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                <span>${message}</span>
+            </div>
+            ${existingCustomer ? `
+                <div class="error-actions">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="orderManager.selectCustomer('${existingCustomer.id}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                        Mevcut Müşteriyi Seç
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="orderManager.clearCustomerAndCreateNew()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Yeni Müşteri Oluştur
+                    </button>
+                </div>
+            ` : ''}
+        `;
+        
+        formGroup.appendChild(errorDiv);
+    }
+
+    clearCustomerValidationError() {
+        const customerNameInput = document.getElementById('customer-name');
+        const formGroup = customerNameInput.parentElement;
+        
+        // Remove error styling
+        customerNameInput.classList.remove('error');
+        
+        // Remove error message
+        const existingError = formGroup.querySelector('.customer-validation-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
+    clearCustomerAndCreateNew() {
+        const customerNameInput = document.getElementById('customer-name');
+        customerNameInput.value = '';
+        this.currentOrder.customerName = '';
+        this.currentOrder.customerId = null;
+        this.clearCustomerValidationError();
+        this.updateOrderSummary();
+        this.saveDraftOrder();
+        customerNameInput.focus();
+    }
+
+    validateProductSelection() {
+        const productSearchInput = document.getElementById('product-search');
+        const productValue = productSearchInput.value.trim();
+
+        // Clear any existing validation errors
+        this.clearProductValidationError();
+
+        // Check if product field is empty
+        if (!productValue) {
+            this.showProductValidationError('Lütfen bir ürün seçin');
+            return false;
+        }
+
+        // Check if a valid product is selected
+        if (!this.selectedProduct || this.selectedProduct.code !== productValue) {
+            this.showProductValidationError('Geçerli bir ürün seçin veya listeden bir ürün seçin');
+            return false;
+        }
+
+        return true;
+    }
+
+    showProductValidationError(message) {
+        const productSearchInput = document.getElementById('product-search');
+        const formGroup = productSearchInput.parentElement.parentElement;
+        
+        // Remove any existing error message first
+        const existingError = formGroup.querySelector('.product-validation-error');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        // Add error styling to input
+        productSearchInput.classList.add('error');
+        
+        // Create error message container
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'product-validation-error';
+        errorDiv.innerHTML = `
+            <div class="error-message">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        formGroup.appendChild(errorDiv);
+    }
+
+    clearProductValidationError() {
+        const productSearchInput = document.getElementById('product-search');
+        const formGroup = productSearchInput.parentElement.parentElement;
+        
+        // Remove error styling
+        productSearchInput.classList.remove('error');
+        
+        // Remove error message
+        const existingError = formGroup.querySelector('.product-validation-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
     addItem() {
         const productSearch = document.getElementById('product-search');
         const quantity = document.getElementById('quantity');
@@ -146,16 +465,17 @@ class OrderManager {
         const qty = parseInt(quantity.value);
         const itemNotes = notes.value.trim();
 
-        if (!productCode) {
-            this.showError('Lütfen bir ürün kodu girin');
+        // Validate customer name first
+        if (!this.validateCustomerName()) {
             return;
         }
 
-        const product = productDatabase.searchByCode(productCode);
-        if (!product) {
-            this.showError('Ürün kodu bulunamadı');
+        // Validate product selection
+        if (!this.validateProductSelection()) {
             return;
         }
+
+        const product = this.selectedProduct;
 
         if (qty < 1 || qty > 999) {
             this.showError('Miktar 1 ile 999 arasında olmalıdır');
@@ -374,8 +694,7 @@ class OrderManager {
         }
 
         // Validate customer name before generating PDF
-        if (!this.currentOrder.customerName) {
-            this.showError('PDF oluşturmadan önce lütfen müşteri adını girin');
+        if (!this.validateCustomerName()) {
             document.getElementById('customer-name').focus();
             return;
         }
@@ -450,6 +769,16 @@ class OrderManager {
     loadDraft() {
         this.loadDraftOrder();
         this.showSuccess('Taslak yüklendi');
+    }
+
+    saveDraft() {
+        if (this.currentOrder.items.length === 0) {
+            this.showError('Kaydedilecek öğe yok');
+            return;
+        }
+        
+        this.saveDraftOrder();
+        this.showSuccess('Taslak kaydedildi');
     }
 
     saveToHistory() {

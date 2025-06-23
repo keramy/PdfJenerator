@@ -172,6 +172,13 @@ class CustomerDatabase {
         return this.customers.find(c => c.id === customerId);
     }
 
+    getCustomerByName(name) {
+        if (!name || !name.trim()) return null;
+        return this.customers.find(c => 
+            c.name.toLowerCase() === name.trim().toLowerCase()
+        );
+    }
+
     getCustomerByCode(code) {
         return this.customers.find(c => c.code === code);
     }

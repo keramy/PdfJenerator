@@ -51,14 +51,37 @@ class ProductDatabase {
     }
 
     getSuggestions(input) {
-        if (!input || input.length < 2) return [];
-        
-        const suggestions = this.products.filter(product => 
-            product.code.toLowerCase().startsWith(input.toLowerCase()) ||
-            product.description.toLowerCase().includes(input.toLowerCase())
-        );
-        
-        return suggestions.slice(0, 10);
+        if (!input || input.length < 1) {
+            return this.products.slice(0, 10); // Show first 10 products when empty
+        }
+
+        const term = input.toLowerCase().trim();
+        const suggestions = this.products.filter(product => {
+            return product.code.toLowerCase().includes(term) ||
+                   product.description.toLowerCase().includes(term);
+        });
+
+        return suggestions.sort((a, b) => {
+            // Prioritize exact code matches
+            const aCodeMatch = a.code.toLowerCase().startsWith(term);
+            const bCodeMatch = b.code.toLowerCase().startsWith(term);
+            
+            if (aCodeMatch && !bCodeMatch) return -1;
+            if (!aCodeMatch && bCodeMatch) return 1;
+            
+            // Then prioritize description matches
+            const aDescMatch = a.description.toLowerCase().startsWith(term);
+            const bDescMatch = b.description.toLowerCase().startsWith(term);
+            
+            if (aDescMatch && !bDescMatch) return -1;
+            if (!aDescMatch && bDescMatch) return 1;
+            
+            return a.code.localeCompare(b.code);
+        }).slice(0, 10);
+    }
+
+    getProductSuggestions(input) {
+        return this.getSuggestions(input);
     }
 
     getProductTypes() {

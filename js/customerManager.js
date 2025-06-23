@@ -24,36 +24,46 @@ class CustomerManager {
         customersTab.innerHTML = `
             <div class="customers-container">
                 <div class="customers-header">
-                    <h2>Customer Management</h2>
+                    <h2>Müşteri Yönetimi</h2>
                     <div class="customers-actions">
                         <button class="btn btn-primary" onclick="customerManager.showAddCustomerDialog()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6" "/>
                             </svg>
-                            Add Customer
+                            Müşteri Ekle
                         </button>
-                        <button class="btn btn-secondary" onclick="customerManager.exportCustomers()">
+                        <button class="btn btn-secondary" onclick="customerManager.showExportDialog()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2v9m0 0l-3-3m3 3l3-3M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2h-4" "/>
                             </svg>
-                            Export
+                            Dışa Aktar
+                        </button>
+                        <button class="btn btn-secondary" onclick="customerManager.downloadTemplate()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            Şablonu İndir
                         </button>
                         <button class="btn btn-secondary" onclick="customerManager.showImportDialog()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 14v7m0 0l-3-3m3 3l3-3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2h-4" "/>
                             </svg>
-                            Import
+                            İçe Aktar
                         </button>
                     </div>
                 </div>
 
                 <div class="customers-filters">
                     <div class="filter-group">
-                        <input type="text" id="customer-search" placeholder="Search customers..." class="form-control">
+                        <input type="text" id="customer-search" placeholder="Müşteri ara..." class="form-input">
                     </div>
                     <div class="filter-group">
-                        <select id="customer-filter-tags" class="form-control">
-                            <option value="">All Tags</option>
+                        <select id="customer-filter-tags" class="form-select">
+                            <option value="">Tüm Etiketler</option>
                             <option value="VIP">VIP</option>
                             <option value="Regular">Regular</option>
                             <option value="New">New</option>
@@ -63,13 +73,13 @@ class CustomerManager {
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" "/>
                         </svg>
-                        Filter
+                        Filtrele
                     </button>
                     <button class="btn btn-secondary" onclick="customerManager.clearFilters()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 6L6 18M6 6l12 12" "/>
                         </svg>
-                        Clear
+                        Temizle
                     </button>
                 </div>
 
@@ -112,13 +122,7 @@ class CustomerManager {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8z" "/>
                     </svg>
-                    <p>No customers found</p>
-                    <button class="btn btn-primary" onclick="customerManager.showAddCustomerDialog()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6" "/>
-                        </svg>
-                        Add First Customer
-                    </button>
+                    <p>Müşteri bulunamadı</p>
                 </div>
             `;
             return;
@@ -223,19 +227,19 @@ class CustomerManager {
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value">${filteredCustomers.length}</div>
-                    <div class="stat-label">Showing</div>
+                    <div class="stat-label">Gösteriliyor</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${stats.totalCustomers}</div>
-                    <div class="stat-label">Total Customers</div>
+                    <div class="stat-label">Toplam Müşteri</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${stats.customersWithOrders}</div>
-                    <div class="stat-label">With Orders</div>
+                    <div class="stat-label">Siparişli</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${stats.recentCustomers}</div>
-                    <div class="stat-label">New (30 days)</div>
+                    <div class="stat-label">Yeni (30 gün)</div>
                 </div>
             </div>
         `;
@@ -255,8 +259,11 @@ class CustomerManager {
     }
 
     showCustomerDialog(customer = null) {
+        // Prevent body scroll
+        document.body.classList.add('modal-open');
+        
         const isEditing = customer !== null;
-        const title = isEditing ? 'Edit Customer' : 'Add Customer';
+        const title = isEditing ? 'Müşteriyi Düzenle' : 'Müşteri Ekle';
         
         const modalHtml = `
             <div class="modal-overlay" onclick="customerManager.closeCustomerDialog()">
@@ -273,44 +280,44 @@ class CustomerManager {
                         <form id="customer-form">
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label">Customer Name *</label>
+                                    <label class="form-label">Müşteri Adı *</label>
                                     <input type="text" id="modal-customer-name" class="form-control" value="${customer?.name || ''}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Customer Code</label>
-                                    <input type="text" id="modal-customer-code" class="form-control" value="${customer?.code || ''}" placeholder="Auto-generated if empty">
+                                    <label class="form-label">Müşteri Kodu</label>
+                                    <input type="text" id="modal-customer-code" class="form-control" value="${customer?.code || ''}" placeholder="Boş bırakılırsa otomatik oluşturulur">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Email</label>
+                                    <label class="form-label">E-posta</label>
                                     <input type="email" id="modal-customer-email" class="form-control" value="${customer?.email || ''}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Phone</label>
+                                    <label class="form-label">Telefon</label>
                                     <input type="tel" id="modal-customer-phone" class="form-control" value="${customer?.phone || ''}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Street Address</label>
+                                    <label class="form-label">Sokak Adresi</label>
                                     <input type="text" id="modal-customer-street" class="form-control" value="${customer?.address?.street || ''}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">City</label>
+                                    <label class="form-label">Şehir</label>
                                     <input type="text" id="modal-customer-city" class="form-control" value="${customer?.address?.city || ''}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">State</label>
+                                    <label class="form-label">İl</label>
                                     <input type="text" id="modal-customer-state" class="form-control" value="${customer?.address?.state || ''}">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">ZIP Code</label>
+                                    <label class="form-label">Posta Kodu</label>
                                     <input type="text" id="modal-customer-zip" class="form-control" value="${customer?.address?.zip || ''}">
                                 </div>
                                 <div class="form-group full-width">
-                                    <label class="form-label">Notes</label>
+                                    <label class="form-label">Notlar</label>
                                     <textarea id="modal-customer-notes" class="form-control" rows="3">${customer?.notes || ''}</textarea>
                                 </div>
                                 <div class="form-group full-width">
-                                    <label class="form-label">Tags (comma-separated)</label>
-                                    <input type="text" id="modal-customer-tags" class="form-control" value="${customer?.tags?.join(', ') || ''}" placeholder="VIP, Regular, etc.">
+                                    <label class="form-label">Etiketler (virgülle ayrılı)</label>
+                                    <input type="text" id="modal-customer-tags" class="form-control" value="${customer?.tags?.join(', ') || ''}" placeholder="VIP, Normal, vb.">
                                 </div>
                             </div>
                         </form>
@@ -320,13 +327,13 @@ class CustomerManager {
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 6L6 18M6 6l12 12" "/>
                             </svg>
-                            Cancel
+                            İptal
                         </button>
                         <button class="btn btn-primary" onclick="customerManager.saveCustomer()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 6L9 17l-5-5" "/>
                             </svg>
-                            ${isEditing ? 'Update' : 'Add'} Customer
+                            ${isEditing ? 'Güncelle' : 'Ekle'}
                         </button>
                     </div>
                 </div>
@@ -342,6 +349,8 @@ class CustomerManager {
         if (modal) {
             modal.remove();
         }
+        // Restore body scroll
+        document.body.classList.remove('modal-open');
     }
 
     saveCustomer() {
@@ -367,10 +376,18 @@ class CustomerManager {
 
             if (this.editingCustomerId) {
                 customerDatabase.updateCustomer(this.editingCustomerId, customerData);
-                this.showSuccess('Customer updated successfully');
+                this.showSuccess('Müşteri başarıyla güncellendi');
             } else {
-                customerDatabase.addCustomer(customerData);
-                this.showSuccess('Customer added successfully');
+                const newCustomer = customerDatabase.addCustomer(customerData);
+                this.showSuccess('Müşteri başarıyla eklendi');
+                
+                // If order manager exists and has a pending customer name, update it
+                if (window.orderManager && newCustomer) {
+                    const customerNameInput = document.getElementById('customer-name');
+                    if (customerNameInput && customerNameInput.value.trim().toLowerCase() === newCustomer.name.toLowerCase()) {
+                        orderManager.selectCustomer(newCustomer.id);
+                    }
+                }
             }
 
             this.closeCustomerDialog();
@@ -378,6 +395,8 @@ class CustomerManager {
             this.updateStats();
         } catch (error) {
             this.showError(error.message);
+            // Ensure scroll is restored even on error
+            document.body.classList.remove('modal-open');
         }
     }
 
@@ -385,10 +404,10 @@ class CustomerManager {
         const customer = customerDatabase.getCustomerById(customerId);
         if (!customer) return;
 
-        if (confirm(`Are you sure you want to delete customer "${customer.name}"? This action cannot be undone.`)) {
+        if (confirm(`"${customer.name}" müşterisini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`)) {
             try {
                 customerDatabase.deleteCustomer(customerId);
-                this.showSuccess('Customer deleted successfully');
+                this.showSuccess('Müşteri başarıyla silindi');
                 this.loadCustomers();
                 this.updateStats();
             } catch (error) {
@@ -419,30 +438,175 @@ class CustomerManager {
 
     exportCustomers() {
         try {
-            const exportData = customerDatabase.exportCustomers();
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
+            const customers = customerDatabase.exportCustomers();
+            const excelContent = this.generateCustomerExcelData(customers);
+            this.downloadExcel(excelContent, `musteriler-${new Date().toISOString().split('T')[0]}.xls`);
             
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `customers-export-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            this.showSuccess('Customers exported successfully');
+            this.showSuccess('Müşteriler Excel olarak dışa aktarıldı');
         } catch (error) {
-            this.showError('Error exporting customers: ' + error.message);
+            this.showError('Müşterileri dışa aktarma hatası: ' + error.message);
         }
     }
 
+    generateCustomerExcelData(customers) {
+        let excelContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Müşteriler">
+  <Table>
+   <Row ss:StyleID="header">
+    <Cell><Data ss:Type="String">Ad</Data></Cell>
+    <Cell><Data ss:Type="String">E-posta</Data></Cell>
+    <Cell><Data ss:Type="String">Telefon</Data></Cell>
+    <Cell><Data ss:Type="String">Adres</Data></Cell>
+    <Cell><Data ss:Type="String">Etiket</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Sipariş</Data></Cell>
+   </Row>`;
+
+        customers.forEach(customer => {
+            excelContent += `
+   <Row>
+    <Cell><Data ss:Type="String">${customer.name || ''}</Data></Cell>
+    <Cell><Data ss:Type="String">${customer.email || ''}</Data></Cell>
+    <Cell><Data ss:Type="String">${customer.phone || ''}</Data></Cell>
+    <Cell><Data ss:Type="String">${customer.address || ''}</Data></Cell>
+    <Cell><Data ss:Type="String">${customer.tag || ''}</Data></Cell>
+    <Cell><Data ss:Type="Number">${customer.totalOrders || 0}</Data></Cell>
+   </Row>`;
+        });
+
+        excelContent += `
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        return excelContent;
+    }
+
+    downloadTemplate() {
+        const templateContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Müşteri Şablonu">
+  <Table>
+   <Row ss:StyleID="header">
+    <Cell><Data ss:Type="String">Ad</Data></Cell>
+    <Cell><Data ss:Type="String">E-posta</Data></Cell>
+    <Cell><Data ss:Type="String">Telefon</Data></Cell>
+    <Cell><Data ss:Type="String">Adres</Data></Cell>
+    <Cell><Data ss:Type="String">Etiket</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Sipariş</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">Örnek Müşteri</Data></Cell>
+    <Cell><Data ss:Type="String">ornek@email.com</Data></Cell>
+    <Cell><Data ss:Type="String">+90 555 123 4567</Data></Cell>
+    <Cell><Data ss:Type="String">Örnek Adres, İstanbul</Data></Cell>
+    <Cell><Data ss:Type="String">VIP</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        this.downloadExcel(templateContent, 'musteri-sablonu.xls');
+        this.showSuccess('Müşteri şablonu indirildi');
+    }
+
+    downloadExcel(content, filename) {
+        const blob = new Blob([content], { type: 'application/vnd.ms-excel' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    showExportDialog() {
+        // Prevent body scroll
+        document.body.classList.add('modal-open');
+        
+        const modalHtml = `
+            <div class="modal-overlay" onclick="customerManager.closeExportDialog()">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <div class="modal-header">
+                        <h3>Müşteri Dışa Aktar</h3>
+                        <button class="modal-close" onclick="customerManager.closeExportDialog()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Müşteri verilerini Excel formatında dışa aktarmak istediğinizden emin misiniz?</p>
+                        <div class="export-info">
+                            <p><strong>İçerik:</strong> Tüm müşteri bilgileri, e-posta, telefon, adres ve etiketler dahil edilecek.</p>
+                            <p><strong>Format:</strong> Excel (.xls) dosyası</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="customerManager.closeExportDialog()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                            İptal
+                        </button>
+                        <button class="btn btn-primary" onclick="customerManager.confirmExport()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2v9m0 0l-3-3m3 3l3-3M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2h-4" />
+                            </svg>
+                            Dışa Aktar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    closeExportDialog() {
+        const modal = document.querySelector('.modal-overlay');
+        if (modal) {
+            modal.remove();
+        }
+        // Restore body scroll
+        document.body.classList.remove('modal-open');
+    }
+
+    confirmExport() {
+        this.exportCustomers();
+        this.closeExportDialog();
+    }
+
     showImportDialog() {
+        // Prevent body scroll
+        document.body.classList.add('modal-open');
+        
         const modalHtml = `
             <div class="modal-overlay" onclick="customerManager.closeImportDialog()">
                 <div class="modal-content" onclick="event.stopPropagation()">
                     <div class="modal-header">
-                        <h3>Import Customers</h3>
+                        <h3>Müşteri İçe Aktar</h3>
                         <button class="modal-close" onclick="customerManager.closeImportDialog()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 6L6 18M6 6l12 12" "/>
@@ -450,10 +614,10 @@ class CustomerManager {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Select a JSON file containing customer data to import:</p>
-                        <input type="file" id="customer-import-file" accept=".json" class="form-control">
+                        <p>İçe aktarılacak müşteri verilerini içeren Excel veya JSON dosyasını seçin:</p>
+                        <input type="file" id="customer-import-file" accept=".xls,.xlsx,.json" class="form-control">
                         <div class="import-info">
-                            <p><strong>Note:</strong> Customers with duplicate names will be skipped.</p>
+                            <p><strong>Not:</strong> Aynı isimli müşteriler atlanacaktır.</p>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -461,13 +625,13 @@ class CustomerManager {
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 6L6 18M6 6l12 12" "/>
                             </svg>
-                            Cancel
+                            İptal
                         </button>
                         <button class="btn btn-primary" onclick="customerManager.importCustomers()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 14v7m0 0l-3-3m3 3l3-3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2h-4" "/>
                             </svg>
-                            Import
+                            İçe Aktar
                         </button>
                     </div>
                 </div>
@@ -482,6 +646,8 @@ class CustomerManager {
         if (modal) {
             modal.remove();
         }
+        // Restore body scroll
+        document.body.classList.remove('modal-open');
     }
 
     importCustomers() {
@@ -489,7 +655,7 @@ class CustomerManager {
         const file = fileInput.files[0];
         
         if (!file) {
-            this.showError('Please select a file to import');
+            this.showError('Lütfen içe aktarılacak dosyayı seçin');
             return;
         }
 
@@ -500,13 +666,15 @@ class CustomerManager {
                 const customersData = data.customers || data;
                 
                 const result = customerDatabase.importCustomers(customersData);
-                this.showSuccess(`Import completed: ${result.imported} imported, ${result.skipped} skipped`);
+                this.showSuccess(`İçe aktarma tamamlandı: ${result.imported} eklendi, ${result.skipped} atlandı`);
                 
                 this.closeImportDialog();
                 this.loadCustomers();
                 this.updateStats();
             } catch (error) {
-                this.showError('Error importing customers: ' + error.message);
+                this.showError('Müşteri içe aktarma hatası: ' + error.message);
+                // Ensure scroll is restored even on error
+                this.closeImportDialog();
             }
         };
         

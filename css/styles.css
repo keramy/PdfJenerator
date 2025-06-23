@@ -55,6 +55,15 @@ body {
     object-fit: contain;
 }
 
+.logo-link {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+}
+
 .company-info {
     flex: 1;
 }
@@ -1337,7 +1346,8 @@ svg.tab-icon,
     border: 1px solid #f6e05e;
 }
 
-.status-badge.status-in-progress {
+.status-badge.status-in-progress,
+.status-badge.status-in_production {
     background: #ebf8ff;
     color: #2c5282;
     border: 1px solid #4299e1;
@@ -1353,6 +1363,54 @@ svg.tab-icon,
     background: #fed7d7;
     color: #742a2a;
     border: 1px solid #f56565;
+}
+
+/* Status Toggle */
+.status-toggle {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.5rem;
+}
+
+.status-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.status-toggle:hover .status-badge {
+    opacity: 0.8;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+
+/* Status Container */
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Revert Button */
+.btn-revert {
+    background: #fed7d7;
+    border: 1px solid #f56565;
+    color: #742a2a;
+    padding: 0.25rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-revert:hover {
+    background: #feb2b2;
+    border-color: #e53e3e;
+    transform: scale(1.05);
 }
 
 /* Progress Indicators */
@@ -2270,6 +2328,393 @@ input:checked + .slider:before {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* Modal Body Scroll Prevention */
+body.modal-open {
+    overflow: hidden;
+    padding-right: 17px; /* Compensate for scrollbar width */
+}
+
+/* Enhanced Modal Styles for Customer Add/Edit */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+    backdrop-filter: blur(8px);
+    animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(8px);
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Enhanced Modal Content */
+.modal-overlay .modal-content {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced Modal Header */
+.modal-overlay .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 2rem 1.5rem 2rem;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-overlay .modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.05"/><circle cx="20" cy="80" r="0.5" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+.modal-overlay .modal-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.modal-overlay .modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+
+.modal-overlay .modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+/* Enhanced Modal Body */
+.modal-overlay .modal-body {
+    padding: 2rem;
+    background: #ffffff;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Enhanced Form Grid for Customer Modal */
+.modal-overlay .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 0;
+}
+
+.modal-overlay .form-group {
+    position: relative;
+}
+
+.modal-overlay .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.modal-overlay .form-label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.modal-overlay .form-control,
+.modal-overlay .form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.modal-overlay .form-control:focus,
+.modal-overlay .form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.modal-overlay textarea.form-control,
+.modal-overlay textarea.form-input {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Enhanced Modal Footer */
+.modal-overlay .modal-footer {
+    padding: 1.5rem 2rem 2rem 2rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.modal-overlay .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-overlay .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.modal-overlay .btn:hover::before {
+    left: 100%;
+}
+
+.modal-overlay .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+}
+
+.modal-overlay .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+.modal-overlay .btn-secondary {
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    color: #6b7280;
+}
+
+.modal-overlay .btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design for Enhanced Modal */
+@media (max-width: 768px) {
+    .modal-overlay {
+        padding: 0.5rem;
+    }
+    
+    .modal-overlay .modal-content {
+        max-width: 100%;
+        border-radius: 12px;
+    }
+    
+    .modal-overlay .modal-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+    }
+    
+    .modal-overlay .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-overlay .modal-footer {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+        flex-direction: column;
+    }
+    
+    .modal-overlay .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Customer and Product Validation Error Styles */
+.form-input.error,
+.form-control.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.customer-validation-error,
+.product-validation-error {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.customer-validation-error .error-message,
+.product-validation-error .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #dc2626;
+    margin-bottom: 0.75rem;
+}
+
+.customer-validation-error .error-message svg,
+.product-validation-error .error-message svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+.customer-validation-error .error-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-sm.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-sm.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-sm.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-sm.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-sm svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Product Search Results Styles */
+.product-result {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.product-result:hover {
+    background-color: #f8fafc;
+}
+
+.product-result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.product-result-code {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 0.875rem;
+}
+
+.product-result-description {
+    color: #4a5568;
+    font-size: 0.875rem;
+}
+
+.product-result-details {
+    color: #718096;
+    font-size: 0.75rem;
+}
+
+.no-results-hint {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    display: block;
+    margin-top: 0.25rem;
 }
 
 /* Print Styles */
