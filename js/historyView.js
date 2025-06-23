@@ -15,6 +15,16 @@ class HistoryView {
         }, 100);
     }
 
+    getStatusText(status) {
+        const statusMap = {
+            'completed': 'Tamamlandı',
+            'in_production': 'Üretimde',
+            'pending': 'Beklemede',
+            'cancelled': 'İptal Edildi'
+        };
+        return statusMap[status] || status;
+    }
+
     initializeHistoryTab() {
         const historyTab = document.getElementById('history-tab');
         if (!historyTab) {
@@ -26,58 +36,68 @@ class HistoryView {
         historyTab.innerHTML = `
             <div class="history-container">
                 <div class="history-header">
-                    <h2>Order History</h2>
+                    <h2>Sipariş Geçmişi</h2>
                     <div class="history-actions">
                         <button class="btn btn-secondary" onclick="historyView.exportHistory()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path d="M12 2v9m0 0l-3-3m3 3l3-3M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2h-4" "/>
                             </svg>
-                            Export
+                            Dışa Aktar
+                        </button>
+                        <button class="btn btn-secondary" onclick="historyView.downloadTemplate()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            Şablonu İndir
                         </button>
                         <button class="btn btn-secondary" onclick="historyView.showImportDialog()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path d="M12 14v7m0 0l-3-3m3 3l3-3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2h-4" "/>
                             </svg>
-                            Import
+                            İçe Aktar
                         </button>
                         <button class="btn btn-primary" onclick="historyView.refreshHistory()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" "/>
                             </svg>
-                            Refresh
+                            Yenile
                         </button>
                     </div>
                 </div>
 
                 <div class="history-filters">
                     <div class="filter-group">
-                        <input type="text" id="history-search" placeholder="Search by order #, customer, or product..." class="form-control">
+                        <input type="text" id="history-search" placeholder="Sipariş no, müşteri veya ürüne göre ara..." class="form-input">
                     </div>
                     <div class="filter-group">
-                        <input type="date" id="filter-date-from" class="form-control" placeholder="From date">
+                        <input type="date" id="filter-date-from" class="form-input" placeholder="Başlangıç tarihi">
                     </div>
                     <div class="filter-group">
-                        <input type="date" id="filter-date-to" class="form-control" placeholder="To date">
+                        <input type="date" id="filter-date-to" class="form-input" placeholder="Bitiş tarihi">
                     </div>
                     <div class="filter-group">
-                        <select id="filter-status" class="form-control">
-                            <option value="">All Status</option>
-                            <option value="completed">Completed</option>
-                            <option value="pending">Pending</option>
-                            <option value="cancelled">Cancelled</option>
+                        <select id="filter-status" class="form-select">
+                            <option value="">Tüm Durumlar</option>
+                            <option value="completed">Tamamlandı</option>
+                            <option value="in_production">Üretimde</option>
+                            <option value="cancelled">İptal Edildi</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" onclick="historyView.applyFilters()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" "/>
                         </svg>
-                        Filter
+                        Filtrele
                     </button>
                     <button class="btn btn-secondary" onclick="historyView.clearFilters()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 6L6 18M6 6l12 12" "/>
                         </svg>
-                        Clear
+                        Temizle
                     </button>
                 </div>
 
@@ -88,8 +108,8 @@ class HistoryView {
                 <div class="consumption-stats-card">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Material Consumption Summary</h3>
-                            <p class="card-subtitle">Total materials consumed across all completed orders</p>
+                            <h3 class="card-title">Malzeme Tüketim Özeti</h3>
+                            <p class="card-subtitle">Tamamlanan tüm siparişlerdeki toplam malzeme tüketimi</p>
                         </div>
                         <div class="card-content">
                             <div id="consumption-stats" class="consumption-stats">
@@ -103,13 +123,13 @@ class HistoryView {
                     <table class="history-table">
                         <thead>
                             <tr>
-                                <th onclick="historyView.sortBy('orderNumber')">Order # <span class="sort-icon">↕</span></th>
-                                <th onclick="historyView.sortBy('date')">Date <span class="sort-icon">↕</span></th>
-                                <th onclick="historyView.sortBy('customerName')">Customer <span class="sort-icon">↕</span></th>
-                                <th>Items</th>
-                                <th onclick="historyView.sortBy('totalWeight')">Weight <span class="sort-icon">↕</span></th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th onclick="historyView.sortBy('orderNumber')">Sipariş No <span class="sort-icon">↕</span></th>
+                                <th onclick="historyView.sortBy('date')">Tarih <span class="sort-icon">↕</span></th>
+                                <th onclick="historyView.sortBy('customerName')">Müşteri <span class="sort-icon">↕</span></th>
+                                <th>Adet</th>
+                                <th onclick="historyView.sortBy('totalWeight')">Ağırlık <span class="sort-icon">↕</span></th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
                             </tr>
                         </thead>
                         <tbody id="history-table-body">
@@ -126,11 +146,11 @@ class HistoryView {
             <!-- Import Dialog (hidden by default) -->
             <div id="import-dialog" class="modal" style="display: none;">
                 <div class="modal-content">
-                    <h3>Import Orders</h3>
+                    <h3>Siparişleri İçe Aktar</h3>
                     <div class="import-options">
                         <label>
                             <input type="file" id="import-file" accept=".json" />
-                            <p>Select a JSON file containing order data</p>
+                            <p>Sipariş verilerini içeren bir JSON dosyası seçin</p>
                         </label>
                     </div>
                     <div class="modal-actions">
@@ -138,13 +158,13 @@ class HistoryView {
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 14v7m0 0l-3-3m3 3l3-3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2h-4" "/>
                             </svg>
-                            Import
+                            İçe Aktar
                         </button>
                         <button class="btn btn-secondary" onclick="historyView.closeImportDialog()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M18 6L6 18M6 6l12 12" "/>
                             </svg>
-                            Cancel
+                            İptal
                         </button>
                     </div>
                 </div>
@@ -204,19 +224,19 @@ class HistoryView {
             statsContainer.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-value">${stats.totalOrders}</div>
-                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-label">Toplam Sipariş</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${stats.totalItems}</div>
-                    <div class="stat-label">Total Items</div>
+                    <div class="stat-label">Toplam Adet</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${stats.totalWeight.toFixed(2)}g</div>
-                    <div class="stat-label">Total Weight</div>
+                    <div class="stat-label">Toplam Ağırlık</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${stats.topCustomers[0]?.name || 'N/A'}</div>
-                    <div class="stat-label">Top Customer</div>
+                    <div class="stat-label">En İyi Müşteri</div>
                 </div>
             `;
         }
@@ -235,8 +255,8 @@ class HistoryView {
                         </div>
                         <div class="consumption-details">
                             <div class="consumption-value">${stats.totalMetalWeight.toFixed(2)}g</div>
-                            <div class="consumption-label">Total Metal Consumed</div>
-                            <div class="consumption-sublabel">Across ${stats.totalOrders} orders</div>
+                            <div class="consumption-label">Toplam Metal Tüketimi</div>
+                            <div class="consumption-sublabel">${stats.totalOrders} siparişte</div>
                         </div>
                     </div>
                     <div class="consumption-item stone">
@@ -247,8 +267,8 @@ class HistoryView {
                         </div>
                         <div class="consumption-details">
                             <div class="consumption-value">${stats.totalStoneWeight.toFixed(2)}g</div>
-                            <div class="consumption-label">Total Stones Consumed</div>
-                            <div class="consumption-sublabel">Across ${stats.totalOrders} orders</div>
+                            <div class="consumption-label">Toplam Taş Tüketimi</div>
+                            <div class="consumption-sublabel">${stats.totalOrders} siparişte</div>
                         </div>
                     </div>
                     <div class="consumption-item combined">
@@ -259,8 +279,8 @@ class HistoryView {
                         </div>
                         <div class="consumption-details">
                             <div class="consumption-value">${stats.totalWeight.toFixed(2)}g</div>
-                            <div class="consumption-label">Total Material Weight</div>
-                            <div class="consumption-sublabel">Metal + Stones combined</div>
+                            <div class="consumption-label">Toplam Malzeme Ağırlığı</div>
+                            <div class="consumption-sublabel">Metal + Taş toplamı</div>
                         </div>
                     </div>
                 </div>
@@ -314,7 +334,7 @@ class HistoryView {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 2rem;">
-                        <p>No orders found</p>
+                        <p>Sipariş bulunamadı</p>
                     </td>
                 </tr>
             `;
@@ -327,39 +347,53 @@ class HistoryView {
                 <td>${new Date(order.date).toLocaleDateString()}</td>
                 <td>${order.customerName || 'N/A'}</td>
                 <td>
-                    <span class="item-count">${order.totalItems} items</span>
+                    <span class="item-count">${order.items.reduce((sum, item) => sum + item.quantity, 0)} adet</span>
                     <div class="item-details">
                         ${order.items.slice(0, 3).map(item => 
-                            `<small>${item.code} (${item.quantity})</small>`
+                            `<small>${item.code} (x${item.quantity})</small>`
                         ).join(', ')}
-                        ${order.items.length > 3 ? `<small>+${order.items.length - 3} more</small>` : ''}
+                        ${order.items.length > 3 ? `<small>... +${order.items.length - 3} daha</small>` : ''}
                     </div>
                 </td>
                 <td>${order.totalWeight.toFixed(2)}g</td>
                 <td>
-                    <span class="status-badge status-${order.status || 'completed'}">
-                        ${order.status || 'completed'}
-                    </span>
+                    <div class="status-container">
+                        ${order.status === 'in_production' ? `
+                            <label class="status-toggle">
+                                <input type="checkbox" onclick="historyView.toggleOrderStatus('${order.id}')" title="Tamamlandı olarak işaretle">
+                                <span class="status-badge status-in_production">
+                                    ${this.getStatusText('in_production')}
+                                </span>
+                            </label>
+                        ` : `
+                            <span class="status-badge status-${order.status || 'completed'}">
+                                ${this.getStatusText(order.status || 'completed')}
+                            </span>
+                            ${order.status === 'completed' ? `
+                                <button class="btn-revert" onclick="historyView.revertOrderStatus('${order.id}')" title="Üretime geri al">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 12a9 9 0 009-9 9.75 9.75 0 00-6.74 2.74L3 8"/>
+                                        <path d="M3 3v5h5"/>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                        `}
+                    </div>
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn-icon" onclick="historyView.viewOrderDetails('${order.id}')" title="View details">
+                        <button class="btn-icon" onclick="historyView.viewOrderDetails('${order.id}')" title="Detayları gör">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
                         </button>
-                        <button class="btn-icon" onclick="historyView.duplicateOrder('${order.id}')" title="Duplicate order">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" "/>
-                            </svg>
-                        </button>
-                        <button class="btn-icon" onclick="historyView.reprintOrder('${order.id}')" title="Reprint PDF">
+                        <button class="btn-icon" onclick="historyView.reprintOrder('${order.id}')" title="PDF'i yeniden yazdır">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" "/>
                             </svg>
                         </button>
-                        <button class="btn-icon btn-danger" onclick="historyView.deleteOrder('${order.id}')" title="Delete order">
+                        <button class="btn-icon btn-danger" onclick="historyView.deleteOrder('${order.id}')" title="Siparişi sil">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" "/>
                             </svg>
@@ -381,7 +415,7 @@ class HistoryView {
 
         let paginationHTML = `
             <div class="pagination-info">
-                Showing ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} of ${totalItems} orders
+                ${totalItems} siparişten ${((this.currentPage - 1) * this.itemsPerPage) + 1}-${Math.min(this.currentPage * this.itemsPerPage, totalItems)} arası gösteriliyor
             </div>
             <div class="pagination-controls">
         `;
@@ -392,7 +426,7 @@ class HistoryView {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15 18l-6-6 6-6" "/>
                 </svg>
-                Previous
+                Önceki
             </button>`;
         }
 
@@ -410,7 +444,7 @@ class HistoryView {
         // Next button
         if (this.currentPage < totalPages) {
             paginationHTML += `<button onclick="historyView.goToPage(${this.currentPage + 1})">
-                Next
+                Sonraki
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 18l6-6-6-6" "/>
                 </svg>
@@ -453,7 +487,7 @@ class HistoryView {
     refreshHistory() {
         this.loadHistory();
         if (window.orderManager) {
-            window.orderManager.showSuccess('History refreshed');
+            window.orderManager.showSuccess('Geçmiş yenilendi');
         }
     }
 
@@ -467,7 +501,7 @@ class HistoryView {
         modal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Order Details - ${order.orderNumber}</h3>
+                    <h3>Sipariş Detayları - ${order.orderNumber}</h3>
                     <button class="close-btn" onclick="this.closest('.modal').remove()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 6L6 18M6 6l12 12" "/>
@@ -476,49 +510,37 @@ class HistoryView {
                 </div>
                 <div class="modal-body">
                     <div class="order-info">
-                        <p><strong>Date:</strong> ${new Date(order.date).toLocaleString()}</p>
-                        <p><strong>Customer:</strong> ${order.customerName || 'N/A'}</p>
-                        <p><strong>Status:</strong> ${order.status || 'completed'}</p>
-                        <p><strong>Total Items:</strong> ${order.totalItems}</p>
-                        <p><strong>Metal Weight:</strong> ${(order.totalMetalWeight || order.totalWeight || 0).toFixed(2)}g</p>
-                        <p><strong>Stone Weight:</strong> ${(order.totalStoneWeight || 0).toFixed(2)}g</p>
-                        <p><strong>Total Weight:</strong> ${order.totalWeight.toFixed(2)}g</p>
+                        <p><strong>Tarih:</strong> ${new Date(order.date).toLocaleString()}</p>
+                        <p><strong>Müşteri:</strong> ${order.customerName || 'Belirtilmemiş'}</p>
+                        <p><strong>Durum:</strong> ${this.getStatusText(order.status || 'completed')}</p>
+                        <p><strong>Toplam Adet:</strong> ${order.totalItems}</p>
+                        <p><strong>Metal Ağırlığı:</strong> ${(order.totalMetalWeight || order.totalWeight || 0).toFixed(2)}g</p>
+                        <p><strong>Taş Ağırlığı:</strong> ${(order.totalStoneWeight || 0).toFixed(2)}g</p>
+                        <p><strong>Toplam Ağırlık:</strong> ${order.totalWeight.toFixed(2)}g</p>
                     </div>
-                    <h4>Items:</h4>
+                    <h4>Ürünler:</h4>
                     <div class="order-items-list">
                         ${order.items.map(item => `
                             <div class="order-item-detail">
                                 <div class="item-code">${item.code}</div>
                                 <div class="item-desc">${item.description}</div>
                                 <div class="item-specs">
-                                    <span>Qty: ${item.quantity}</span>
+                                    <span>Miktar: ${item.quantity}</span>
                                     <span>Metal: ${item.metalWeight || item.weight || 0}g</span>
-                                    <span>Stone: ${item.stoneWeight ? item.stoneWeight + 'g' : 'None'}</span>
-                                    <span>Total: ${((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2)}g</span>
+                                    <span>Taş: ${item.stoneWeight ? item.stoneWeight + 'g' : 'Yok'}</span>
+                                    <span>Toplam: ${((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2)}g</span>
                                 </div>
-                                ${item.notes ? `<div class="item-notes">Notes: ${item.notes}</div>` : ''}
+                                ${item.notes ? `<div class="item-notes">Notlar: ${item.notes}</div>` : ''}
                             </div>
                         `).join('')}
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="historyView.duplicateOrder('${order.id}'); this.closest('.modal').remove()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" "/>
-                        </svg>
-                        Duplicate Order
-                    </button>
-                    <button class="btn btn-secondary" onclick="historyView.reprintOrder('${order.id}'); this.closest('.modal').remove()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" "/>
-                        </svg>
-                        Reprint PDF
-                    </button>
                     <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 6L6 18M6 6l12 12" "/>
                         </svg>
-                        Close
+                        Kapat
                     </button>
                 </div>
             </div>
@@ -527,57 +549,196 @@ class HistoryView {
         modal.style.display = 'flex';
     }
 
-    duplicateOrder(orderId) {
-        if (window.orderManager) {
-            window.orderManager.loadOrderFromHistory(orderId);
-        }
-    }
 
     reprintOrder(orderId) {
         const order = orderHistory.getOrder(orderId);
-        if (!order) return;
+        if (!order) {
+            if (window.orderManager) {
+                window.orderManager.showError('Sipariş bulunamadı');
+            }
+            return;
+        }
 
+        // Try jsPDF first
         if (typeof window.jsPDF !== 'undefined') {
             try {
                 const pdfGenerator = new PDFGenerator();
                 pdfGenerator.generateWorkOrder(order);
                 if (window.orderManager) {
-                    window.orderManager.showSuccess('PDF regenerated successfully');
+                    window.orderManager.showSuccess('PDF başarıyla yeniden oluşturuldu');
                 }
+                return;
             } catch (error) {
-                console.error('PDF generation error:', error);
-                if (window.orderManager) {
-                    window.orderManager.showError('Failed to generate PDF');
-                }
+                console.error('jsPDF error:', error);
+            }
+        }
+
+        // Fallback to offline PDF generator
+        try {
+            const offlinePDF = new OfflinePDFGenerator();
+            offlinePDF.generateWorkOrder(order);
+            if (window.orderManager) {
+                window.orderManager.showSuccess('PDF yazdırma penceresi açıldı');
+            }
+        } catch (error) {
+            console.error('Offline PDF error:', error);
+            if (window.orderManager) {
+                window.orderManager.showError('PDF oluşturulamadı. Lütfen sayfayı yenileyin ve tekrar deneyin.');
+            }
+        }
+    }
+
+    toggleOrderStatus(orderId) {
+        const order = orderHistory.getOrder(orderId);
+        if (!order) return;
+
+        // Update status from in_production to completed
+        if (order.status === 'in_production') {
+            orderHistory.updateOrderStatus(orderId, 'completed');
+            this.loadHistory();
+            if (window.orderManager) {
+                window.orderManager.showSuccess('Sipariş tamamlandı olarak işaretlendi');
+            }
+        }
+    }
+
+    revertOrderStatus(orderId) {
+        const order = orderHistory.getOrder(orderId);
+        if (!order) return;
+
+        // Update status from completed back to in_production
+        if (order.status === 'completed') {
+            orderHistory.updateOrderStatus(orderId, 'in_production');
+            this.loadHistory();
+            if (window.orderManager) {
+                window.orderManager.showSuccess('Sipariş üretime geri alındı');
             }
         }
     }
 
     deleteOrder(orderId) {
-        if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+        if (confirm('Bu siparişi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
             if (orderHistory.deleteOrder(orderId)) {
                 this.loadHistory();
                 if (window.orderManager) {
-                    window.orderManager.showSuccess('Order deleted');
+                    window.orderManager.showSuccess('Sipariş silindi');
                 }
             }
         }
     }
 
     exportHistory() {
-        const format = confirm('Export as CSV? (OK = CSV, Cancel = JSON)') ? 'csv' : 'json';
-        const data = orderHistory.exportOrders(format);
+        const data = this.generateExcelData();
+        this.downloadExcel(data, `siparis-gecmisi-${new Date().toISOString().split('T')[0]}.xls`);
         
-        const blob = new Blob([data], { type: format === 'csv' ? 'text/csv' : 'application/json' });
+        if (window.orderManager) {
+            window.orderManager.showSuccess('Geçmiş Excel olarak dışa aktarıldı');
+        }
+    }
+
+    generateExcelData() {
+        const orders = orderHistory.getAllOrders();
+        
+        let excelContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sipariş Geçmişi">
+  <Table>
+   <Row ss:StyleID="header">
+    <Cell><Data ss:Type="String">Sipariş No</Data></Cell>
+    <Cell><Data ss:Type="String">Tarih</Data></Cell>
+    <Cell><Data ss:Type="String">Müşteri</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Adet</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Ağırlık (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Metal Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Taş Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Durum</Data></Cell>
+   </Row>`;
+
+        orders.forEach(order => {
+            excelContent += `
+   <Row>
+    <Cell><Data ss:Type="String">${order.orderNumber}</Data></Cell>
+    <Cell><Data ss:Type="String">${order.date}</Data></Cell>
+    <Cell><Data ss:Type="String">${order.customerName || 'Belirtilmemiş'}</Data></Cell>
+    <Cell><Data ss:Type="Number">${order.totalItems}</Data></Cell>
+    <Cell><Data ss:Type="Number">${order.totalWeight.toFixed(2)}</Data></Cell>
+    <Cell><Data ss:Type="Number">${(order.totalMetalWeight || 0).toFixed(2)}</Data></Cell>
+    <Cell><Data ss:Type="Number">${(order.totalStoneWeight || 0).toFixed(2)}</Data></Cell>
+    <Cell><Data ss:Type="String">${this.getStatusText(order.status || 'completed')}</Data></Cell>
+   </Row>`;
+        });
+
+        excelContent += `
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        return excelContent;
+    }
+
+    downloadExcel(content, filename) {
+        const blob = new Blob([content], { type: 'application/vnd.ms-excel' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `order-history-${new Date().toISOString().split('T')[0]}.${format}`;
+        a.download = filename;
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    downloadTemplate() {
+        const templateContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sipariş Şablonu">
+  <Table>
+   <Row ss:StyleID="header">
+    <Cell><Data ss:Type="String">Sipariş No</Data></Cell>
+    <Cell><Data ss:Type="String">Tarih</Data></Cell>
+    <Cell><Data ss:Type="String">Müşteri</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Adet</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Ağırlık (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Metal Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Taş Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Durum</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">WO-20240101-1200</Data></Cell>
+    <Cell><Data ss:Type="String">01.01.2024</Data></Cell>
+    <Cell><Data ss:Type="String">Örnek Müşteri</Data></Cell>
+    <Cell><Data ss:Type="Number">5</Data></Cell>
+    <Cell><Data ss:Type="Number">25.50</Data></Cell>
+    <Cell><Data ss:Type="Number">20.00</Data></Cell>
+    <Cell><Data ss:Type="Number">5.50</Data></Cell>
+    <Cell><Data ss:Type="String">Üretimde</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        this.downloadExcel(templateContent, 'siparis-sablonu.xls');
         
         if (window.orderManager) {
-            window.orderManager.showSuccess(`History exported as ${format.toUpperCase()}`);
+            window.orderManager.showSuccess('Sipariş şablonu indirildi');
         }
     }
 
@@ -601,7 +762,7 @@ class HistoryView {
         const file = fileInput.files[0];
         
         if (!file) {
-            alert('Please select a file');
+            alert('Lütfen bir dosya seçin');
             return;
         }
 
@@ -612,11 +773,11 @@ class HistoryView {
                 this.closeImportDialog();
                 this.loadHistory();
                 if (window.orderManager) {
-                    window.orderManager.showSuccess(`Imported ${count} orders`);
+                    window.orderManager.showSuccess(`${count} sipariş içe aktarıldı`);
                 }
             } catch (error) {
                 console.error('Import error:', error);
-                alert('Failed to import orders. Please check the file format.');
+                alert('Siparişler içe aktarılamadı. Lütfen dosya formatını kontrol edin.');
             }
         };
         reader.readAsText(file);

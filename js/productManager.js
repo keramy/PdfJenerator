@@ -474,27 +474,118 @@ class ProductManager {
     }
 
     exportData() {
-        const data = {
-            products: productDatabase.getAllProducts(),
-            exportDate: new Date().toISOString(),
-            totalProducts: productDatabase.products.length
-        };
+        try {
+            const products = productDatabase.getAllProducts();
+            const excelContent = this.generateProductExcelData(products);
+            this.downloadExcel(excelContent, `urunler-${new Date().toISOString().split('T')[0]}.xls`);
+            
+            if (orderManager) {
+                orderManager.showSuccess('Ürünler Excel olarak dışa aktarıldı');
+            }
+        } catch (error) {
+            if (orderManager) {
+                orderManager.showError('Ürünleri dışa aktarma hatası: ' + error.message);
+            }
+        }
+    }
 
-        const jsonString = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
+    generateProductExcelData(products) {
+        let excelContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Ürünler">
+  <Table>
+   <Row ss:StyleID="header">
+    <Cell><Data ss:Type="String">Ürün Kodu</Data></Cell>
+    <Cell><Data ss:Type="String">Açıklama</Data></Cell>
+    <Cell><Data ss:Type="String">Metal Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Taş Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Ağırlık (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Malzeme</Data></Cell>
+    <Cell><Data ss:Type="String">Tip</Data></Cell>
+   </Row>`;
+
+        products.forEach(product => {
+            excelContent += `
+   <Row>
+    <Cell><Data ss:Type="String">${product.code || ''}</Data></Cell>
+    <Cell><Data ss:Type="String">${product.description || ''}</Data></Cell>
+    <Cell><Data ss:Type="Number">${product.metalWeight || product.weight || 0}</Data></Cell>
+    <Cell><Data ss:Type="Number">${product.stoneWeight || 0}</Data></Cell>
+    <Cell><Data ss:Type="Number">${product.totalWeight || product.weight || 0}</Data></Cell>
+    <Cell><Data ss:Type="String">${product.material || ''}</Data></Cell>
+    <Cell><Data ss:Type="String">${product.type || ''}</Data></Cell>
+   </Row>`;
+        });
+
+        excelContent += `
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        return excelContent;
+    }
+
+    downloadTemplate() {
+        const templateContent = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <Styles>
+  <Style ss:ID="header">
+   <Font ss:Bold="1"/>
+   <Interior ss:Color="#CCCCCC" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Ürün Şablonu">
+  <Table>
+   <Row ss:StyleID="header">
+    <Cell><Data ss:Type="String">Ürün Kodu</Data></Cell>
+    <Cell><Data ss:Type="String">Açıklama</Data></Cell>
+    <Cell><Data ss:Type="String">Metal Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Taş Ağırlığı (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Toplam Ağırlık (g)</Data></Cell>
+    <Cell><Data ss:Type="String">Malzeme</Data></Cell>
+    <Cell><Data ss:Type="String">Tip</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">KP001</Data></Cell>
+    <Cell><Data ss:Type="String">Örnek Altın Küpe</Data></Cell>
+    <Cell><Data ss:Type="Number">2.80</Data></Cell>
+    <Cell><Data ss:Type="Number">0.25</Data></Cell>
+    <Cell><Data ss:Type="Number">3.05</Data></Cell>
+    <Cell><Data ss:Type="String">Gold</Data></Cell>
+    <Cell><Data ss:Type="String">Hoop Earrings</Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>`;
+
+        this.downloadExcel(templateContent, 'urun-sablonu.xls');
+        if (orderManager) {
+            orderManager.showSuccess('Ürün şablonu indirildi');
+        }
+    }
+
+    downloadExcel(content, filename) {
+        const blob = new Blob([content], { type: 'application/vnd.ms-excel' });
         const url = URL.createObjectURL(blob);
-        
         const a = document.createElement('a');
         a.href = url;
-        a.download = `jewelry_products_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
+        a.download = filename;
         a.click();
-        document.body.removeChild(a);
         URL.revokeObjectURL(url);
-
-        if (orderManager) {
-            orderManager.showSuccess('Products exported successfully');
-        }
     }
 }
 

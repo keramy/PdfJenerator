@@ -32,7 +32,7 @@ class OrderHistory {
             ...orderData,
             id: this.generateUniqueId(),
             completedDate: new Date().toISOString(),
-            status: 'completed',
+            status: 'in_production',
             version: 1
         };
         

@@ -1,9 +1,9 @@
 class PDFGenerator {
     constructor() {
         this.doc = null;
-        this.pageWidth = 210;
-        this.pageHeight = 297;
-        this.margin = 20;
+        this.pageWidth = 210; // A4 width in mm
+        this.pageHeight = 297; // A4 height in mm
+        this.margin = 15;
         this.currentY = 0;
     }
 
@@ -86,87 +86,101 @@ class PDFGenerator {
         this.doc.setFontSize(14);
         this.doc.setFont('helvetica', 'bold');
         this.doc.text('SİPARİŞ ÖĞELERİ', this.margin, this.currentY);
-        this.currentY += 15;
+        this.currentY += 10;
 
+        // Add table header
+        this.addItemsHeader();
+        
         items.forEach((item, index) => {
-            this.addSingleItem(item, index + 1);
+            this.addItemRow(item, index + 1);
         });
     }
 
-    addSingleItem(item, itemNumber) {
-        if (this.currentY > this.pageHeight - 60) {
+    addItemsHeader() {
+        this.doc.setFontSize(10);
+        this.doc.setFont('helvetica', 'bold');
+        this.doc.setFillColor(240, 240, 240);
+        
+        const headerY = this.currentY;
+        const rowHeight = 8;
+        const tableWidth = this.pageWidth - (2 * this.margin);
+        
+        // Draw header background
+        this.doc.rect(this.margin, headerY, tableWidth, rowHeight, 'F');
+        
+        // Draw header text
+        this.doc.setTextColor(0, 0, 0);
+        let xPos = this.margin + 2;
+        this.doc.text('#', xPos, headerY + 5);
+        xPos += 10;
+        this.doc.text('Kod', xPos, headerY + 5);
+        xPos += 25;
+        this.doc.text('Açıklama', xPos, headerY + 5);
+        xPos += 60;
+        this.doc.text('Miktar', xPos, headerY + 5);
+        xPos += 20;
+        this.doc.text('Metal(g)', xPos, headerY + 5);
+        xPos += 25;
+        this.doc.text('Taş(g)', xPos, headerY + 5);
+        xPos += 20;
+        this.doc.text('Toplam(g)', xPos, headerY + 5);
+        
+        this.currentY += rowHeight + 2;
+    }
+    
+    addItemRow(item, itemNumber) {
+        if (this.currentY > this.pageHeight - 30) {
             this.doc.addPage();
             this.currentY = this.margin;
+            this.addItemsHeader();
         }
-
-        const itemHeight = 45;
-        const imageSize = 35;
-        const startY = this.currentY;
-
-        this.doc.setFillColor(248, 249, 250);
-        this.doc.rect(this.margin, startY, this.pageWidth - (2 * this.margin), itemHeight, 'F');
-
-        this.doc.setDrawColor(220, 220, 220);
-        this.doc.setLineWidth(0.2);
-        this.doc.rect(this.margin, startY, this.pageWidth - (2 * this.margin), itemHeight);
-
-        this.doc.setFillColor(255, 255, 255);
-        this.doc.rect(this.margin + 5, startY + 5, imageSize, imageSize, 'F');
-        this.doc.setDrawColor(200, 200, 200);
-        this.doc.rect(this.margin + 5, startY + 5, imageSize, imageSize);
-
-        // Try to add product image if available
-        if (item.imageData) {
-            try {
-                // Add the image to PDF (jsPDF supports base64 images)
-                this.doc.addImage(item.imageData, 'JPEG', this.margin + 5, startY + 5, imageSize, imageSize);
-            } catch (error) {
-                console.warn('Could not add image to PDF:', error);
-                // Fallback to placeholder text
-                this.doc.setFontSize(8);
-                this.doc.setTextColor(150, 150, 150);
-                this.doc.text('IMAGE', this.margin + 5 + (imageSize / 2), startY + 5 + (imageSize / 2), { align: 'center' });
-            }
-        } else {
-            // Show placeholder text
-            this.doc.setFontSize(8);
-            this.doc.setTextColor(150, 150, 150);
-            this.doc.text('IMAGE', this.margin + 5 + (imageSize / 2), startY + 5 + (imageSize / 2), { align: 'center' });
+        
+        const rowHeight = 7;
+        const tableWidth = this.pageWidth - (2 * this.margin);
+        
+        // Alternate row background
+        if (itemNumber % 2 === 0) {
+            this.doc.setFillColor(248, 249, 250);
+            this.doc.rect(this.margin, this.currentY, tableWidth, rowHeight, 'F');
         }
-
-        const textStartX = this.margin + imageSize + 15;
-        let textY = startY + 8;
-
-        this.doc.setFontSize(12);
-        this.doc.setFont('helvetica', 'bold');
-        this.doc.setTextColor(0, 0, 0);
-        this.doc.text(`${itemNumber}. ${item.code}`, textStartX, textY);
-
-        textY += 6;
-        this.doc.setFontSize(10);
-        this.doc.setFont('helvetica', 'normal');
-        this.doc.text(item.description, textStartX, textY);
-
-        textY += 8;
+        
+        // Draw row data
         this.doc.setFontSize(9);
-        this.doc.setFont('helvetica', 'bold');
-        this.doc.text(`Metal: ${item.metalWeight || item.weight || 0}g`, textStartX, textY);
-        this.doc.text(`Taş: ${item.stoneWeight ? item.stoneWeight + 'g' : 'Yok'}`, textStartX + 25, textY);
-        this.doc.text(`Malzeme: ${item.material}`, textStartX + 50, textY);
-        this.doc.text(`Tip: ${item.type}`, textStartX + 80, textY);
-
-        textY += 6;
-        this.doc.text(`Miktar: ${item.quantity}`, textStartX, textY);
-        this.doc.text(`Toplam Ağırlık: ${((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2)}g`, textStartX + 35, textY);
-
-        if (item.notes) {
-            textY += 6;
-            this.doc.setFont('helvetica', 'italic');
-            this.doc.setTextColor(100, 100, 100);
-            this.doc.text(`Notlar: ${item.notes}`, textStartX, textY);
+        this.doc.setFont('helvetica', 'normal');
+        this.doc.setTextColor(0, 0, 0);
+        
+        let xPos = this.margin + 2;
+        this.doc.text(itemNumber.toString(), xPos, this.currentY + 5);
+        xPos += 10;
+        this.doc.text(item.code, xPos, this.currentY + 5);
+        xPos += 25;
+        
+        // Truncate description if too long
+        let desc = item.description;
+        if (desc.length > 35) {
+            desc = desc.substring(0, 32) + '...';
         }
-
-        this.currentY += itemHeight + 10;
+        this.doc.text(desc, xPos, this.currentY + 5);
+        xPos += 60;
+        
+        this.doc.text(item.quantity.toString(), xPos, this.currentY + 5);
+        xPos += 20;
+        this.doc.text((item.metalWeight || item.weight || 0).toString(), xPos, this.currentY + 5);
+        xPos += 25;
+        this.doc.text(item.stoneWeight ? item.stoneWeight.toString() : '-', xPos, this.currentY + 5);
+        xPos += 20;
+        this.doc.text(((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2), xPos, this.currentY + 5);
+        
+        // Add notes as separate row if exists
+        if (item.notes) {
+            this.currentY += rowHeight;
+            this.doc.setFont('helvetica', 'italic');
+            this.doc.setFontSize(8);
+            this.doc.setTextColor(100, 100, 100);
+            this.doc.text(`   Notlar: ${item.notes}`, this.margin + 12, this.currentY + 4);
+        }
+        
+        this.currentY += rowHeight;
     }
 
     addSummary(orderData) {

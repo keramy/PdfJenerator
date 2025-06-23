@@ -30,7 +30,7 @@ class OfflinePDFGenerator {
             <title>Work Order ${orderData.orderNumber}</title>
             <style>
                 @page {
-                    margin: 0.5in;
+                    margin: 15mm;
                     size: A4;
                 }
                 body {
