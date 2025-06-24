@@ -437,40 +437,23 @@ class PDFGenerator {
     // Summary section removed - weights moved to header, signature moved to footer
 
     addFooter(pageNum = 1, totalPages = 1) {
-        const footerY = this.pageHeight - 25; // More space for signature
+        const footerY = this.pageHeight - 20; // Adjusted for minimal footer
         
-        this.setFontStyle('normal', 8);
-        this.doc.setTextColor(100, 100, 100);
-        
-        // Company name and system info
-        this.doc.text(this.formatTurkishText('LIZAR KUYUMCULUK - İş Emri Yönetim Sistemi'), this.pageWidth / 2, footerY, { align: 'center' });
-        
-        // Timestamp and page number row
-        const now = new Date();
-        const timestamp = now.toLocaleString('tr-TR', { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit', 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-        
-        // Left side: timestamp
-        this.doc.text(this.formatTurkishText(`Oluşturulma: ${timestamp}`), this.margin, footerY + 5);
-        
-        // Right side: page number (only if multiple pages)  
+        // Page number (only if multiple pages)  
         if (totalPages > 1) {
-            this.doc.text(this.formatTurkishText(`Sayfa ${pageNum} / ${totalPages}`), this.pageWidth - this.margin, footerY + 5, { align: 'right' });
+            this.setFontStyle('normal', 8);
+            this.doc.setTextColor(100, 100, 100);
+            this.doc.text(this.formatTurkishText(`Sayfa ${pageNum} / ${totalPages}`), this.pageWidth - this.margin, footerY, { align: 'right' });
         }
         
         // Signature line
         this.setFontStyle('normal', 10);
         this.doc.setTextColor(0, 0, 0);
-        this.doc.text(this.formatTurkishText('Personel İmzası: ________________________'), this.margin, footerY + 15);
+        this.doc.text(this.formatTurkishText('Personel İmzası: ________________________'), this.margin, footerY + 5);
         
-        // Footer line above text
+        // Footer line above signature
         this.doc.setLineWidth(0.3);
         this.doc.setDrawColor(180, 180, 180);
-        this.doc.line(this.margin, footerY - 3, this.pageWidth - this.margin, footerY - 3);
+        this.doc.line(this.margin, footerY - 5, this.pageWidth - this.margin, footerY - 5);
     }
 }
