@@ -234,11 +234,7 @@ class PDFGenerator {
                 // Add items for this page
                 this.addItemsForPage(pageItems, startIndex);
                 
-                // Add summary only on the last page
-                if (pageNum === totalPages) {
-                    this.addSummary(orderData);
-                }
-                
+                // Footer includes signature (no separate summary needed)
                 this.addFooter(pageNum, totalPages);
             }
 
@@ -299,6 +295,12 @@ class PDFGenerator {
         
         this.doc.text(this.formatTurkishText(`Toplam Öğe: ${orderData.totalItems}`), this.margin, this.currentY);
         this.doc.text(this.formatTurkishText(`Toplam Ağırlık: ${orderData.totalWeight.toFixed(2)}g`), this.pageWidth - this.margin - 50, this.currentY);
+        
+        this.currentY += 10;
+        
+        // Add metal and stone weights row
+        this.doc.text(this.formatTurkishText(`Metal Ağırlığı: ${orderData.totalMetalWeight.toFixed(2)}g`), this.margin, this.currentY);
+        this.doc.text(this.formatTurkishText(`Taş Ağırlığı: ${orderData.totalStoneWeight.toFixed(2)}g`), this.pageWidth - this.margin - 50, this.currentY);
         
         this.currentY += 15;
         
@@ -432,48 +434,10 @@ class PDFGenerator {
         return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
     }
 
-    addSummary(orderData) {
-        if (this.currentY > this.pageHeight - 40) {
-            this.doc.addPage();
-            this.currentY = this.margin;
-        }
-
-        this.currentY += 8;
-        
-        this.doc.setLineWidth(0.5);
-        this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
-        this.currentY += 12;
-
-        this.setFontStyle('bold', 14);
-        this.doc.setTextColor(0, 0, 0);
-        this.doc.text(this.formatTurkishText('SİPARİŞ ÖZETİ'), this.margin, this.currentY);
-        this.currentY += 15;
-
-        this.doc.setFontSize(12);
-        this.doc.text(this.formatTurkishText(`Toplam Öğe: ${orderData.totalItems}`), this.margin, this.currentY);
-        this.currentY += 8;
-        
-        this.doc.text(this.formatTurkishText(`Metal Ağırlığı: ${orderData.totalMetalWeight.toFixed(2)}g`), this.margin, this.currentY);
-        this.doc.text(this.formatTurkishText(`Taş Ağırlığı: ${orderData.totalStoneWeight.toFixed(2)}g`), this.margin + 60, this.currentY);
-        this.currentY += 8;
-        
-        this.doc.text(this.formatTurkishText(`Toplam Ağırlık: ${orderData.totalWeight.toFixed(2)}g`), this.margin, this.currentY);
-        this.currentY += 8;
-
-        this.doc.text(this.formatTurkishText(`Müşteri: ${orderData.customerName || 'Belirtilmemiş'}`), this.margin, this.currentY);
-        this.currentY += 8;
-        
-        this.doc.text(this.formatTurkishText(`Sipariş Tarihi: ${orderData.date}`), this.margin, this.currentY);
-        this.doc.text(this.formatTurkishText(`Sipariş No: ${orderData.orderNumber}`), this.margin + 60, this.currentY);
-        this.currentY += 15;
-
-        this.setFontStyle('normal', 10);
-        this.doc.text(this.formatTurkishText('Personel İmzası: ________________________'), this.margin, this.currentY);
-        this.doc.text(this.formatTurkishText('Tamamlanma Tarihi: ________________________'), this.margin + 80, this.currentY);
-    }
+    // Summary section removed - weights moved to header, signature moved to footer
 
     addFooter(pageNum = 1, totalPages = 1) {
-        const footerY = this.pageHeight - 15;
+        const footerY = this.pageHeight - 25; // More space for signature
         
         this.setFontStyle('normal', 8);
         this.doc.setTextColor(100, 100, 100);
@@ -498,6 +462,11 @@ class PDFGenerator {
         if (totalPages > 1) {
             this.doc.text(this.formatTurkishText(`Sayfa ${pageNum} / ${totalPages}`), this.pageWidth - this.margin, footerY + 5, { align: 'right' });
         }
+        
+        // Signature line
+        this.setFontStyle('normal', 10);
+        this.doc.setTextColor(0, 0, 0);
+        this.doc.text(this.formatTurkishText('Personel İmzası: ________________________'), this.margin, footerY + 15);
         
         // Footer line above text
         this.doc.setLineWidth(0.3);
