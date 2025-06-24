@@ -7,34 +7,69 @@ class PDFGenerator {
         this.currentY = 0;
     }
 
-    setupTurkishFont() {
+    async setupTurkishFont() {
         try {
-            // Enhanced approach for Turkish character support
-            // Configure the PDF for better UTF-8 handling
-            
-            // Try Times-Roman first as it has better Unicode support than Helvetica
-            this.doc.setFont('times', 'normal');
-            
-            // Enable UTF-8 support in jsPDF if available
-            if (this.doc.internal.textEncoding) {
-                this.doc.internal.textEncoding = 'UTF-8';
+            // Try to use DejaVu Sans font for full Turkish character support
+            if (window.dejaVuFontLoader) {
+                // Load the font data
+                const fontData = await window.dejaVuFontLoader.loadFont();
+                
+                if (fontData) {
+                    // Add font to this PDF document
+                    const success = window.dejaVuFontLoader.addToJsPDF(this.doc);
+                    
+                    if (success) {
+                        console.log('DejaVu Sans font loaded successfully - full Turkish character support enabled');
+                        this.fontLoaded = true;
+                        this.useNativeText = true; // Flag to skip character conversion
+                        return;
+                    }
+                }
             }
             
-            // Set proper language and encoding
-            this.doc.setLanguage('tr-TR');
-            this.doc.setDocumentProperties({
-                language: 'tr-TR',
-                encoding: 'UTF-8'
-            });
+            // Fallback: Try to load DejaVu Sans directly from file
+            try {
+                const response = await fetch('/fonts/DejaVuSans.ttf');
+                if (response.ok) {
+                    const arrayBuffer = await response.arrayBuffer();
+                    const base64 = this.arrayBufferToBase64(arrayBuffer);
+                    
+                    this.doc.addFileToVFS('DejaVuSans.ttf', base64);
+                    this.doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+                    this.doc.setFont('DejaVuSans', 'normal');
+                    
+                    console.log('DejaVu Sans loaded directly - Turkish characters supported');
+                    this.fontLoaded = true;
+                    this.useNativeText = true;
+                    return;
+                }
+            } catch (e) {
+                console.log('Direct font loading failed:', e);
+            }
             
-            console.log('Turkish font configuration applied with Times font and UTF-8 encoding');
-            this.fontLoaded = true;
+            // Final fallback: Use Times font with character mapping
+            this.setFontStyle('normal');
+            console.log('Using Times font with character mapping for Turkish support');
+            this.fontLoaded = false;
+            this.useNativeText = false;
             
         } catch (e) {
-            console.log('Font configuration failed, using Helvetica with character mapping:', e);
-            this.doc.setFont('helvetica', 'normal');
+            console.log('Font configuration failed, using Times with character mapping:', e);
+            this.setFontStyle('normal');
             this.fontLoaded = false;
+            this.useNativeText = false;
         }
+    }
+    
+    // Helper method to convert ArrayBuffer to base64
+    arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
     }
     
     setupTurkishCharMapping() {
@@ -53,12 +88,12 @@ class PDFGenerator {
     formatTurkishText(text) {
         if (!text) return '';
         
-        // If custom font loaded successfully, use text as-is
-        if (this.fontLoaded) {
+        // If DejaVu Sans is loaded, return text as-is (native Turkish support)
+        if (this.useNativeText) {
             return text;
         }
         
-        // Fallback: Use character substitution for better compatibility
+        // Fallback: Use character substitution for Times font
         const charMap = {
             'ğ': 'g', 'Ğ': 'G',
             'ü': 'u', 'Ü': 'U',
@@ -74,6 +109,20 @@ class PDFGenerator {
         }
         
         return result;
+    }
+    
+    // Helper method to set font based on DejaVu Sans availability
+    setFontStyle(style = 'normal', size = 12) {
+        this.doc.setFontSize(size);
+        
+        if (this.useNativeText) {
+            // DejaVu Sans loaded - use it for all text
+            this.doc.setFont('DejaVuSans', 'normal');
+        } else {
+            // Fallback to Times font
+            const fontStyle = style === 'bold' ? 'bold' : (style === 'italic' ? 'italic' : 'normal');
+            this.doc.setFont('times', fontStyle);
+        }
     }
 
     // Helper method to add product images to PDF
@@ -157,8 +206,8 @@ class PDFGenerator {
             // Configure for Turkish character support
             this.doc.setCharSpace(0);
             
-            // Add Turkish-compatible font
-            this.setupTurkishFont();
+            // Add Turkish-compatible font (await for async font loading)
+            await this.setupTurkishFont();
             
             this.currentY = this.margin;
 
@@ -205,8 +254,7 @@ class PDFGenerator {
 
     addHeader(orderData, pageNum = 1, totalPages = 1) {
         // Company header with improved Turkish support
-        this.doc.setFontSize(22);
-        this.doc.setFont('times', 'bold');
+        this.setFontStyle('bold', 22);
         this.doc.setTextColor(0, 51, 102); // Dark blue color
         
         // Main title with Turkish character support
@@ -214,15 +262,14 @@ class PDFGenerator {
         this.currentY += 12;
         
         // Subtitle
-        this.doc.setFontSize(11);
-        this.doc.setFont('times', 'normal');
+        this.setFontStyle('normal', 11);
         this.doc.setTextColor(100, 100, 100); // Gray color
         this.doc.text(this.formatTurkishText('Profesyonel İş Emri Yönetim Sistemi'), this.pageWidth / 2, this.currentY, { align: 'center' });
         this.currentY += 8;
         
         // Page number (only if multiple pages)
         if (totalPages > 1) {
-            this.doc.setFontSize(9);
+            this.setFontStyle('normal', 9);
             this.doc.setTextColor(120, 120, 120);
             this.doc.text(this.formatTurkishText(`Sayfa ${pageNum} / ${totalPages}`), this.pageWidth / 2, this.currentY, { align: 'center' });
             this.currentY += 8;
@@ -239,8 +286,7 @@ class PDFGenerator {
     }
 
     addOrderInfo(orderData) {
-        this.doc.setFontSize(12);
-        this.doc.setFont('times', 'bold');
+        this.setFontStyle('bold', 12);
         
         this.doc.text(this.formatTurkishText(`Sipariş No: ${orderData.orderNumber}`), this.margin, this.currentY);
         this.doc.text(this.formatTurkishText(`Tarih: ${orderData.date}`), this.pageWidth - this.margin - 50, this.currentY);
@@ -262,8 +308,7 @@ class PDFGenerator {
     }
 
     addItemsForPage(items, startIndex) {
-        this.doc.setFontSize(13);
-        this.doc.setFont('times', 'bold');
+        this.setFontStyle('bold', 13);
         this.doc.setTextColor(0, 51, 102);
         this.doc.text(this.formatTurkishText('SİPARİŞ ÖĞELERİ'), this.margin, this.currentY);
         this.currentY += 8;
@@ -280,8 +325,7 @@ class PDFGenerator {
     }
 
     addItemsHeader() {
-        this.doc.setFontSize(9);
-        this.doc.setFont('times', 'bold');
+        this.setFontStyle('bold', 9);
         
         const headerY = this.currentY;
         const rowHeight = 10;
@@ -341,8 +385,7 @@ class PDFGenerator {
         this.doc.rect(this.margin, this.currentY, tableWidth, rowHeight, 'S');
         
         // Row data with improved positioning
-        this.doc.setFontSize(8);
-        this.doc.setFont('times', 'normal');
+        this.setFontStyle('normal', 8);
         this.doc.setTextColor(0, 0, 0);
         
         // Add product image first (if available)
@@ -372,14 +415,13 @@ class PDFGenerator {
             this.doc.setFillColor(255, 255, 240); // Light yellow for notes
             this.doc.rect(this.margin, this.currentY, tableWidth, noteRowHeight, 'F');
             
-            this.doc.setFontSize(7);
-            this.doc.setFont('times', 'italic');
+            this.setFontStyle('italic', 7);
             this.doc.setTextColor(80, 80, 80);
             this.doc.text(this.formatTurkishText(`Not: ${this.truncateText(item.notes, 90)}`), this.margin + 5, this.currentY + 6);
             
             // Reset formatting
             this.doc.setTextColor(0, 0, 0);
-            this.doc.setFont('times', 'normal');
+            this.setFontStyle('normal');
             this.currentY += noteRowHeight;
         }
     }
@@ -402,8 +444,7 @@ class PDFGenerator {
         this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
         this.currentY += 15;
 
-        this.doc.setFontSize(14);
-        this.doc.setFont('times', 'bold');
+        this.setFontStyle('bold', 14);
         this.doc.setTextColor(0, 0, 0);
         this.doc.text(this.formatTurkishText('SİPARİŞ ÖZETİ'), this.margin, this.currentY);
         this.currentY += 15;
@@ -426,8 +467,7 @@ class PDFGenerator {
         this.doc.text(this.formatTurkishText(`Sipariş No: ${orderData.orderNumber}`), this.margin + 60, this.currentY);
         this.currentY += 15;
 
-        this.doc.setFontSize(10);
-        this.doc.setFont('times', 'normal');
+        this.setFontStyle('normal', 10);
         this.doc.text(this.formatTurkishText('Personel İmzası: ________________________'), this.margin, this.currentY);
         this.doc.text(this.formatTurkishText('Tamamlanma Tarihi: ________________________'), this.margin + 80, this.currentY);
     }
@@ -435,8 +475,7 @@ class PDFGenerator {
     addFooter(pageNum = 1, totalPages = 1) {
         const footerY = this.pageHeight - 15;
         
-        this.doc.setFontSize(8);
-        this.doc.setFont('times', 'normal');
+        this.setFontStyle('normal', 8);
         this.doc.setTextColor(100, 100, 100);
         
         // Company name and system info

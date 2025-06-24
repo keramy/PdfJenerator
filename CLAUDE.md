@@ -26,10 +26,11 @@ A comprehensive jewelry work order management system with product catalog, custo
 - **ENHANCED**: Asynchronous PDF loading with improved detection and multiple CDN fallbacks
 - **IMPROVED**: PDF generation now uses promise-based loading with proper error handling
 - **NEW: Complete PDF Generation Overhaul** ✅
-  - **ENHANCED Turkish Character Support**: Switched from Helvetica to Times font with UTF-8 encoding for proper display of ğ, ü, ş, ı, ö, ç characters
+  - **FULL TURKISH CHARACTER SUPPORT**: Implemented DejaVu Sans font loading system for native support of ğ, ü, ş, ı, ö, ç characters
+  - **DejaVu Sans Integration**: Created font loader module that loads TTF files from /fonts/ directory and converts to base64
+  - **Smart Font System**: Automatic fallback to Times font with character mapping if DejaVu Sans fails to load
   - **Product Images**: Added thumbnail images in PDF table with 14x14mm sizing and placeholder icons for products without images
-  - **Times Font Implementation**: Replaced all Helvetica font references with Times font throughout PDF for better Unicode support
-  - **Smart Character Handling**: Implemented fallback character mapping system when font loading fails
+  - **Unified Font Handling**: Created setFontStyle() helper method for consistent font management
   - Implemented 10-item pagination system (100 items = 10 pages as requested)
   - Professional table design with alternating row colors, borders, and improved spacing
   - Page numbers displayed only when multiple pages exist (format: "Sayfa X / Y")
