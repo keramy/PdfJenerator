@@ -341,16 +341,16 @@ class PDFGenerator {
         this.doc.setDrawColor(255, 255, 255);
         this.doc.setLineWidth(0.2);
         
-        // Column positions with improved alignment
+        // Column positions properly fitted for A4 width (180mm usable)
         const columns = [
-            { text: this.formatTurkishText('Resim'), x: this.margin + 11, width: 18, align: 'center' },
-            { text: '#', x: this.margin + 26, width: 12, align: 'center' },
-            { text: 'Kod', x: this.margin + 44, width: 25, align: 'center' },
-            { text: this.formatTurkishText('Açıklama'), x: this.margin + 87, width: 60, align: 'center' },
-            { text: 'Adet', x: this.margin + 124, width: 15, align: 'center' },
-            { text: 'Metal(g)', x: this.margin + 142, width: 20, align: 'center' },
-            { text: this.formatTurkishText('Taş(g)'), x: this.margin + 161, width: 18, align: 'center' },
-            { text: 'Toplam(g)', x: this.margin + 182, width: 25, align: 'center' }
+            { text: this.formatTurkishText('Resim'), x: this.margin + 9, width: 16, align: 'center' },
+            { text: '#', x: this.margin + 22, width: 10, align: 'center' },
+            { text: 'Kod', x: this.margin + 37, width: 20, align: 'center' },
+            { text: this.formatTurkishText('Açıklama'), x: this.margin + 72, width: 50, align: 'center' },
+            { text: 'Adet', x: this.margin + 107, width: 12, align: 'center' },
+            { text: 'Metal(g)', x: this.margin + 127, width: 18, align: 'center' },
+            { text: this.formatTurkishText('Taş(g)'), x: this.margin + 150, width: 16, align: 'center' },
+            { text: 'Toplam(g)', x: this.margin + 170, width: 20, align: 'center' }
         ];
         
         // Draw header text in white with center alignment
@@ -360,7 +360,7 @@ class PDFGenerator {
             
             // Draw vertical lines between columns
             if (index < columns.length - 1) {
-                const lineX = this.margin + [18, 30, 55, 115, 130, 150, 168][index] + 2;
+                const lineX = this.margin + [16, 27, 42, 97, 112, 135, 155][index];
                 this.doc.line(lineX, headerY, lineX, headerY + rowHeight);
             }
         });
@@ -394,15 +394,15 @@ class PDFGenerator {
         // Add product image first (if available) - smaller size for compact layout
         this.addProductImage(item, this.margin + 2, this.currentY + 1.5, 12, 12);
         
-        // Column data with improved alignment matching headers
+        // Column data aligned with A4-fitted headers
         const columns = [
-            { text: itemNumber.toString(), x: this.margin + 26, align: 'center' },
-            { text: item.code, x: this.margin + 44, align: 'center' },
-            { text: this.formatTurkishText(this.truncateText(item.description, 35)), x: this.margin + 57, align: 'left' },
-            { text: item.quantity.toString(), x: this.margin + 124, align: 'center' },
-            { text: (item.metalWeight || 0).toFixed(2), x: this.margin + 142, align: 'center' },
-            { text: item.stoneWeight ? item.stoneWeight.toFixed(2) : '-', x: this.margin + 161, align: 'center' },
-            { text: ((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2), x: this.margin + 182, align: 'center' }
+            { text: itemNumber.toString(), x: this.margin + 22, align: 'center' },
+            { text: item.code, x: this.margin + 37, align: 'center' },
+            { text: this.formatTurkishText(this.truncateText(item.description, 30)), x: this.margin + 47, align: 'left' },
+            { text: item.quantity.toString(), x: this.margin + 107, align: 'center' },
+            { text: (item.metalWeight || 0).toFixed(2), x: this.margin + 127, align: 'center' },
+            { text: item.stoneWeight ? item.stoneWeight.toFixed(2) : '-', x: this.margin + 150, align: 'center' },
+            { text: ((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2), x: this.margin + 170, align: 'center' }
         ];
         
         // Draw column data with proper alignment
