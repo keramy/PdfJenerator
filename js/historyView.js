@@ -550,7 +550,7 @@ class HistoryView {
     }
 
 
-    reprintOrder(orderId) {
+    async reprintOrder(orderId) {
         const order = orderHistory.getOrder(orderId);
         if (!order) {
             if (window.orderManager) {
@@ -559,18 +559,21 @@ class HistoryView {
             return;
         }
 
-        // Try jsPDF first
-        if (typeof window.jsPDF !== 'undefined') {
-            try {
-                const pdfGenerator = new PDFGenerator();
-                pdfGenerator.generateWorkOrder(order);
-                if (window.orderManager) {
-                    window.orderManager.showSuccess('PDF başarıyla yeniden oluşturuldu');
-                }
-                return;
-            } catch (error) {
-                console.error('jsPDF error:', error);
+        // Show loading message
+        if (window.orderManager) {
+            window.orderManager.showSuccess('PDF yeniden oluşturuluyor, lütfen bekleyin...');
+        }
+
+        try {
+            // Try jsPDF with async loading
+            const pdfGenerator = new PDFGenerator();
+            await pdfGenerator.generateWorkOrder(order);
+            if (window.orderManager) {
+                window.orderManager.showSuccess('PDF başarıyla yeniden oluşturuldu');
             }
+            return;
+        } catch (error) {
+            console.error('jsPDF error:', error);
         }
 
         // Fallback to offline PDF generator

@@ -319,6 +319,7 @@ textarea.form-input {
     z-index: 1000;
     display: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    pointer-events: auto;
 }
 
 .search-result {
@@ -1987,6 +1988,7 @@ input:checked + .slider:before {
     z-index: 1000;
     max-height: 300px;
     overflow-y: auto;
+    pointer-events: auto;
 }
 
 .customer-result {
@@ -1994,6 +1996,8 @@ input:checked + .slider:before {
     border-bottom: 1px solid #f1f5f9;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    pointer-events: auto;
+    user-select: none;
 }
 
 .customer-result:hover {
@@ -2682,6 +2686,8 @@ body.modal-open {
     border-bottom: 1px solid #e5e7eb;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    pointer-events: auto;
+    user-select: none;
 }
 
 .product-result:hover {

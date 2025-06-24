@@ -7,29 +7,66 @@ class PDFGenerator {
         this.currentY = 0;
     }
 
-    generateWorkOrder(orderData) {
+    async generateWorkOrder(orderData) {
         try {
-            // Check if jsPDF is available
-            if (typeof window.jsPDF === 'undefined') {
+            // Ensure jsPDF is loaded before proceeding
+            let jsPDFConstructor;
+            
+            if (typeof window.ensureJsPDF === 'function') {
+                jsPDFConstructor = await window.ensureJsPDF();
+            } else if (typeof window.jsPDF !== 'undefined') {
+                jsPDFConstructor = window.jsPDF;
+            } else {
                 throw new Error('jsPDF library not loaded. Please refresh the page.');
             }
             
-            // Try different ways to access jsPDF
-            const { jsPDF } = window;
-            if (jsPDF) {
-                this.doc = new jsPDF();
-            } else if (window.jsPDF) {
-                this.doc = new window.jsPDF();
-            } else {
-                throw new Error('jsPDF library not found');
+            if (!jsPDFConstructor) {
+                throw new Error('jsPDF constructor not found');
             }
+            
+            // Create new PDF document with UTF-8 support
+            this.doc = new jsPDFConstructor({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                putOnlyUsedFonts: true,
+                floatPrecision: 16
+            });
+            
+            // Configure for Turkish character support
+            this.doc.setCharSpace(0);
             this.currentY = this.margin;
 
-            this.addHeader(orderData);
-            this.addOrderInfo(orderData);
-            this.addItems(orderData.items);
-            this.addSummary(orderData);
-            this.addFooter();
+            // Calculate total pages needed (10 items per page)
+            const itemsPerPage = 10;
+            const totalPages = Math.ceil(orderData.items.length / itemsPerPage);
+            
+            // Generate pages with pagination
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum > 1) {
+                    this.doc.addPage();
+                    this.currentY = this.margin;
+                }
+                
+                // Add header and order info on each page
+                this.addHeader(orderData, pageNum, totalPages);
+                this.addOrderInfo(orderData);
+                
+                // Get items for this page
+                const startIndex = (pageNum - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, orderData.items.length);
+                const pageItems = orderData.items.slice(startIndex, endIndex);
+                
+                // Add items for this page
+                this.addItemsForPage(pageItems, startIndex);
+                
+                // Add summary only on the last page
+                if (pageNum === totalPages) {
+                    this.addSummary(orderData);
+                }
+                
+                this.addFooter(pageNum, totalPages);
+            }
 
             const filename = `WorkOrder_${orderData.orderNumber}.pdf`;
             this.doc.save(filename);
@@ -41,22 +78,39 @@ class PDFGenerator {
         }
     }
 
-    addHeader(orderData) {
-        this.doc.setFontSize(24);
+    addHeader(orderData, pageNum = 1, totalPages = 1) {
+        // Company header with improved Turkish support
+        this.doc.setFontSize(22);
         this.doc.setFont('helvetica', 'bold');
+        this.doc.setTextColor(0, 51, 102); // Dark blue color
+        
+        // Main title
         this.doc.text('LIZAR KUYUMCULUK İŞ EMRİ', this.pageWidth / 2, this.currentY, { align: 'center' });
+        this.currentY += 12;
         
-        this.currentY += 15;
-        
-        this.doc.setFontSize(12);
+        // Subtitle
+        this.doc.setFontSize(11);
         this.doc.setFont('helvetica', 'normal');
+        this.doc.setTextColor(100, 100, 100); // Gray color
         this.doc.text('Profesyonel İş Emri Yönetim Sistemi', this.pageWidth / 2, this.currentY, { align: 'center' });
+        this.currentY += 8;
         
-        this.currentY += 20;
+        // Page number (only if multiple pages)
+        if (totalPages > 1) {
+            this.doc.setFontSize(9);
+            this.doc.setTextColor(120, 120, 120);
+            this.doc.text(`Sayfa ${pageNum} / ${totalPages}`, this.pageWidth / 2, this.currentY, { align: 'center' });
+            this.currentY += 8;
+        }
         
-        this.doc.setLineWidth(0.5);
+        // Reset text color
+        this.doc.setTextColor(0, 0, 0);
+        
+        // Header line
+        this.doc.setLineWidth(0.8);
+        this.doc.setDrawColor(0, 51, 102);
         this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
-        this.currentY += 10;
+        this.currentY += 12;
     }
 
     addOrderInfo(orderData) {

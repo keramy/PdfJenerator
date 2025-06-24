@@ -5,7 +5,7 @@ class App {
 
     init() {
         this.setupNavigation();
-        this.setupSearch();
+        // this.setupSearch(); // Disabled - orderManager.js handles product search with enhanced validation
         this.setupModalEvents();
         this.setupFormValidation();
         
@@ -107,6 +107,7 @@ class App {
         resultsContainer.style.display = 'block';
     }
 
+    // Legacy method - no longer used since orderManager.js handles product selection
     selectSearchResult(code) {
         const product = productDatabase.searchByCode(code);
         if (product) {
@@ -254,19 +255,55 @@ window.addEventListener('unhandledrejection', (e) => {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new App();
+    
+    // Show fix status indicator
+    setTimeout(() => {
+        const fixStatusEl = document.getElementById('fix-status');
+        
+        // Check if fixes are active
+        const hasEventDelegation = typeof orderManager !== 'undefined' && 
+                                   typeof orderManager.selectCustomer === 'function';
+        const hasJsPDFEnhancement = typeof window.ensureJsPDF === 'function';
+        
+        if (hasEventDelegation && hasJsPDFEnhancement && fixStatusEl) {
+            fixStatusEl.style.display = 'block';
+            // Hide after 3 seconds
+            setTimeout(() => {
+                fixStatusEl.style.opacity = '0';
+                fixStatusEl.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    fixStatusEl.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+    }, 2000);
 });
 
-// Make sure jsPDF is loaded
+// Enhanced jsPDF detection
 window.addEventListener('load', () => {
-    if (typeof window.jsPDF === 'undefined') {
-        console.warn('jsPDF library not loaded. PDF generation will not work.');
-        // Try to show user-friendly error
-        setTimeout(() => {
-            if (typeof window.orderManager !== 'undefined') {
-                window.orderManager.showError('PDF library not loaded. Please refresh the page.');
-            }
-        }, 2000);
+    // Use the new ensureJsPDF function if available
+    if (typeof window.ensureJsPDF === 'function') {
+        window.ensureJsPDF().then(() => {
+            console.log('jsPDF library confirmed loaded and ready');
+        }).catch((error) => {
+            console.error('Failed to load jsPDF:', error);
+            setTimeout(() => {
+                if (typeof window.orderManager !== 'undefined') {
+                    window.orderManager.showError('PDF library failed to load. Please refresh the page or check your internet connection.');
+                }
+            }, 2000);
+        });
     } else {
-        console.log('jsPDF library loaded successfully');
+        // Fallback to old detection method
+        setTimeout(() => {
+            if (typeof window.jsPDF === 'undefined') {
+                console.warn('jsPDF library not loaded. PDF generation will not work.');
+                if (typeof window.orderManager !== 'undefined') {
+                    window.orderManager.showError('PDF library not loaded. Please refresh the page.');
+                }
+            } else {
+                console.log('jsPDF library loaded successfully');
+            }
+        }, 1000);
     }
 });
