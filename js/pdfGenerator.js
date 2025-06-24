@@ -321,7 +321,7 @@ class PDFGenerator {
             this.addItemRow(item, startIndex + index + 1);
         });
         
-        this.currentY += 5; // Add some space after items
+        this.currentY += 3; // Reduced space after items for compact layout
     }
 
     addItemsHeader() {
@@ -370,7 +370,7 @@ class PDFGenerator {
     }
     
     addItemRow(item, itemNumber) {
-        const rowHeight = 18; // Increased height for images
+        const rowHeight = 15; // Optimized height for single page with 10 items
         const tableWidth = this.pageWidth - (2 * this.margin);
         
         // Alternate row background for better readability
@@ -388,8 +388,8 @@ class PDFGenerator {
         this.setFontStyle('normal', 8);
         this.doc.setTextColor(0, 0, 0);
         
-        // Add product image first (if available)
-        this.addProductImage(item, this.margin + 2, this.currentY + 2, 14, 14);
+        // Add product image first (if available) - smaller size for compact layout
+        this.addProductImage(item, this.margin + 2, this.currentY + 1.5, 12, 12);
         
         // Column data matching header positions (updated for new layout)
         const columns = [
@@ -404,7 +404,7 @@ class PDFGenerator {
         
         // Draw column data
         columns.forEach(col => {
-            this.doc.text(col.text, col.x, this.currentY + 12); // Adjusted for larger row height
+            this.doc.text(col.text, col.x, this.currentY + 10); // Adjusted for optimized row height
         });
         
         this.currentY += rowHeight;
@@ -438,11 +438,11 @@ class PDFGenerator {
             this.currentY = this.margin;
         }
 
-        this.currentY += 10;
+        this.currentY += 8;
         
         this.doc.setLineWidth(0.5);
         this.doc.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
-        this.currentY += 15;
+        this.currentY += 12;
 
         this.setFontStyle('bold', 14);
         this.doc.setTextColor(0, 0, 0);
