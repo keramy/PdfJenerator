@@ -4,45 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIZAR KUYUMCULUK İş Emri Sistemi</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        // Multiple fallback jsPDF loading
+        // Enhanced jsPDF loading with improved detection
         window.jsPDFLoadAttempts = 0;
+        window.jsPDFLoadingPromise = null;
+        
+        function checkJsPDFLoaded() {
+            // Check multiple possible locations for jsPDF
+            return (typeof window.jsPDF !== 'undefined') || 
+                   (typeof window.jspdf !== 'undefined') ||
+                   (window.jspdf && window.jspdf.jsPDF);
+        }
+        
+        function getJsPDFConstructor() {
+            if (window.jsPDF) return window.jsPDF;
+            if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+            if (typeof jsPDF !== 'undefined') return jsPDF;
+            return null;
+        }
         
         function loadJsPDF() {
-            window.jsPDFLoadAttempts++;
-            console.log('Attempting to load jsPDF, attempt:', window.jsPDFLoadAttempts);
-            
-            if (typeof window.jsPDF !== 'undefined') {
-                console.log('jsPDF already loaded successfully');
-                return;
+            if (window.jsPDFLoadingPromise) {
+                return window.jsPDFLoadingPromise;
             }
             
-            const cdnUrls = [
-                'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-                'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js',
-                'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
-                'js/lib/jspdf.min.js' // Local fallback
-            ];
-            
-            if (window.jsPDFLoadAttempts <= cdnUrls.length) {
-                const script = document.createElement('script');
-                script.src = cdnUrls[window.jsPDFLoadAttempts - 1];
-                script.onload = function() {
-                    console.log('jsPDF loaded successfully from:', script.src);
-                    if (typeof window.orderManager !== 'undefined') {
-                        window.orderManager.showSuccess('PDF library loaded successfully');
+            window.jsPDFLoadingPromise = new Promise((resolve, reject) => {
+                if (checkJsPDFLoaded()) {
+                    console.log('jsPDF already loaded successfully');
+                    resolve(getJsPDFConstructor());
+                    return;
+                }
+                
+                window.jsPDFLoadAttempts++;
+                console.log('Attempting to load jsPDF, attempt:', window.jsPDFLoadAttempts);
+                
+                const cdnUrls = [
+                    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+                    'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js',
+                    'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
+                    'js/lib/jspdf.min.js' // Local fallback
+                ];
+                
+                function tryLoadScript(urlIndex) {
+                    if (urlIndex >= cdnUrls.length) {
+                        console.error('All jsPDF CDNs failed to load');
+                        createLocalJsPDF();
+                        resolve(window.jsPDF);
+                        return;
                     }
-                };
-                script.onerror = function() {
-                    console.log('Failed to load jsPDF from:', script.src);
-                    setTimeout(loadJsPDF, 1000); // Try next CDN after 1 second
-                };
-                document.head.appendChild(script);
-            } else {
-                console.error('All jsPDF CDNs failed to load');
-                createLocalJsPDF(); // Try to create a basic PDF implementation
-            }
+                    
+                    const script = document.createElement('script');
+                    script.src = cdnUrls[urlIndex];
+                    script.onload = function() {
+                        console.log('jsPDF loaded successfully from:', script.src);
+                        // Wait a bit for the library to initialize
+                        setTimeout(() => {
+                            if (checkJsPDFLoaded()) {
+                                if (typeof window.orderManager !== 'undefined') {
+                                    window.orderManager.showSuccess('PDF library loaded successfully');
+                                }
+                                resolve(getJsPDFConstructor());
+                            } else {
+                                console.log('jsPDF script loaded but constructor not found, trying next URL');
+                                tryLoadScript(urlIndex + 1);
+                            }
+                        }, 100);
+                    };
+                    script.onerror = function() {
+                        console.log('Failed to load jsPDF from:', script.src);
+                        tryLoadScript(urlIndex + 1);
+                    };
+                    document.head.appendChild(script);
+                }
+                
+                tryLoadScript(0);
+            });
+            
+            return window.jsPDFLoadingPromise;
         }
         
         function createLocalJsPDF() {
@@ -65,22 +103,25 @@
             console.log('Fallback jsPDF implementation created');
         }
         
-        // Start loading when page loads
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                if (typeof window.jsPDF === 'undefined') {
-                    loadJsPDF();
-                } else {
-                    console.log('jsPDF loaded from initial script tag');
-                }
-            }, 500);
-        });
+        // Ensure jsPDF is available when needed
+        window.ensureJsPDF = function() {
+            return loadJsPDF();
+        };
+        
+        // Start loading immediately
+        loadJsPDF();
     </script>
-    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" onerror="console.log('Primary CDN failed, fallback system will handle loading')"></script>
+    <link rel="stylesheet" href="css/styles.css?v=1750754702">
     <link rel="stylesheet" href="css/print.css">
 </head>
 <body>
     <div class="app-container">
+        <!-- Fix Status Indicator -->
+        <div id="fix-status" style="position: fixed; top: 10px; right: 10px; background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 9999; display: none;">
+            ✅ Fixes Active
+        </div>
+        
         <!-- Header -->
         <header class="app-header">
             <div class="header-content">
@@ -499,16 +540,16 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/database.js"></script>
-    <script src="js/imageHandler.js"></script>
-    <script src="js/productManager.js"></script>
-    <script src="js/customerDatabase.js"></script>
-    <script src="js/customerManager.js"></script>
-    <script src="js/orderHistory.js"></script>
-    <script src="js/orderManager.js"></script>
-    <script src="js/pdfGenerator.js"></script>
-    <script src="js/offline-pdf.js"></script>
-    <script src="js/historyView.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/database.js?v=1750755300"></script>
+    <script src="js/imageHandler.js?v=1750755268"></script>
+    <script src="js/productManager.js?v=1750755268"></script>
+    <script src="js/customerDatabase.js?v=1750755268"></script>
+    <script src="js/customerManager.js?v=1750755268"></script>
+    <script src="js/orderHistory.js?v=1750755268"></script>
+    <script src="js/orderManager.js?v=1750755600"></script>
+    <script src="js/pdfGenerator.js?v=1750755268"></script>
+    <script src="js/offline-pdf.js?v=1750755268"></script>
+    <script src="js/historyView.js?v=1750755268"></script>
+    <script src="js/app.js?v=1750755268"></script>
 </body>
 </html>

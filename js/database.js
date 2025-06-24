@@ -9,11 +9,69 @@ class ProductDatabase {
             const response = await fetch('./jewelry_database.json');
             const data = await response.json();
             this.products = data.products;
-            console.log(`Loaded ${this.products.length} products`);
+            console.log(`Loaded ${this.products.length} products from JSON file`);
         } catch (error) {
-            console.error('Error loading products:', error);
-            this.products = [];
+            console.error('Error loading products from JSON:', error);
+            console.log('Loading fallback product data...');
+            this.loadFallbackProducts();
         }
+    }
+
+    loadFallbackProducts() {
+        // Fallback product data for when JSON loading fails
+        this.products = [
+            {
+                "code": "KP001",
+                "metalWeight": "2.80",
+                "stoneWeight": "0.00",
+                "totalWeight": "2.80",
+                "material": "Gold",
+                "type": "Hoop Earrings",
+                "description": "Dokulu altın halka küpe",
+                "image_ref": "page1_item1"
+            },
+            {
+                "code": "KP002", 
+                "metalWeight": "2.90",
+                "stoneWeight": "0.00",
+                "totalWeight": "2.90",
+                "material": "Gold",
+                "type": "Hoop Earrings",
+                "description": "Çizgili altın halka küpe",
+                "image_ref": "page1_item2"
+            },
+            {
+                "code": "KP003",
+                "metalWeight": "3.20",
+                "stoneWeight": "0.25",
+                "totalWeight": "3.45",
+                "material": "Gold",
+                "type": "Stud Earrings",
+                "description": "Taşlı altın tıkalı küpe",
+                "image_ref": "page1_item3"
+            },
+            {
+                "code": "KP004",
+                "metalWeight": "4.50",
+                "stoneWeight": "0.00",
+                "totalWeight": "4.50",
+                "material": "Silver",
+                "type": "Drop Earrings",
+                "description": "Gümüş sarkık küpe",
+                "image_ref": "page1_item4"
+            },
+            {
+                "code": "KY001",
+                "metalWeight": "15.20",
+                "stoneWeight": "1.50",
+                "totalWeight": "16.70",
+                "material": "Gold",
+                "type": "Necklace",
+                "description": "Taşlı altın kolye",
+                "image_ref": "page2_item1"
+            }
+        ];
+        console.log(`Loaded ${this.products.length} fallback products`);
     }
 
     searchByCode(code) {
@@ -52,7 +110,7 @@ class ProductDatabase {
 
     getSuggestions(input) {
         if (!input || input.length < 1) {
-            return this.products.slice(0, 10); // Show first 10 products when empty
+            return []; // Return empty array when no input
         }
 
         const term = input.toLowerCase().trim();

@@ -1,5 +1,6 @@
 class OrderManager {
     constructor() {
+        console.log('🚀 OrderManager constructor called - NEW VERSION');
         this.currentOrder = {
             items: [],
             orderNumber: this.generateOrderNumber(),
@@ -9,6 +10,16 @@ class OrderManager {
             totalItems: 0
         };
         this.loadDraftOrder();
+        
+        // Add visual indicator that new version is loaded
+        setTimeout(() => {
+            const indicator = document.createElement('div');
+            indicator.innerHTML = '🔄 NEW VERSION LOADED';
+            indicator.style.cssText = 'position:fixed;top:50px;right:10px;background:#007bff;color:white;padding:5px 10px;border-radius:5px;font-size:11px;z-index:10000;';
+            document.body.appendChild(indicator);
+            setTimeout(() => indicator.remove(), 3000);
+        }, 100);
+        
         this.setupCustomerNameListener();
         this.setupProductSearchListener();
     }
@@ -42,6 +53,7 @@ class OrderManager {
                 this.updateOrderSummary();
                 this.saveDraftOrder();
                 this.showCustomerSuggestions(e.target.value.trim());
+                this.updateProductSearchState(); // Update product search state when customer changes
             });
 
             customerNameInput.addEventListener('blur', (e) => {
@@ -57,12 +69,46 @@ class OrderManager {
                 }
             });
 
-            // Close suggestions when clicking outside
+            // Close suggestions when clicking outside (with delay to allow item selection)
             document.addEventListener('click', (e) => {
                 if (!searchWrapper.contains(e.target)) {
-                    this.hideCustomerSuggestions();
+                    // Use setTimeout to allow item selection handlers to execute first
+                    setTimeout(() => {
+                        this.hideCustomerSuggestions();
+                    }, 0);
                 }
             });
+            
+            // Add event delegation for customer result clicks with multiple approaches
+            const resultsContainer = document.getElementById('customer-search-results');
+            if (resultsContainer) {
+                console.log('🔧 Setting up customer event delegation');
+                
+                // Method 1: Event delegation
+                resultsContainer.addEventListener('click', (e) => {
+                    console.log('🔍 Customer results container clicked', e.target);
+                    const customerItem = e.target.closest('.customer-result');
+                    if (customerItem && customerItem.dataset.customerId) {
+                        console.log('🎯 Customer item clicked:', customerItem.dataset.customerId);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        this.selectCustomer(customerItem.dataset.customerId);
+                    }
+                });
+                
+                // Method 2: Fallback with mousedown
+                resultsContainer.addEventListener('mousedown', (e) => {
+                    const customerItem = e.target.closest('.customer-result');
+                    if (customerItem && customerItem.dataset.customerId) {
+                        console.log('🎯 Customer mousedown:', customerItem.dataset.customerId);
+                        e.preventDefault();
+                        this.selectCustomer(customerItem.dataset.customerId);
+                    }
+                });
+            } else {
+                console.error('❌ customer-search-results container not found');
+            }
         }
     }
 
@@ -71,24 +117,112 @@ class OrderManager {
         if (productSearchInput) {
             // Clear any existing selected product data
             this.selectedProduct = null;
+            
+            // Initially disable product search
+            this.updateProductSearchState();
 
             productSearchInput.addEventListener('input', (e) => {
-                this.selectedProduct = null; // Reset selected product when typing
+                console.log('🔍 Product input event triggered');
+                console.log('🔍 Current value:', e.target.value);
+                console.log('🔍 Customer name:', this.currentOrder.customerName);
+                console.log('🔍 Customer ID:', this.currentOrder.customerId);
+                
+                // Check if customer is selected
+                if (!this.currentOrder.customerName || !this.currentOrder.customerId) {
+                    console.log('❌ Customer validation failed - blocking product search');
+                    e.preventDefault();
+                    this.showProductValidationError('Önce bir müşteri seçmelisiniz');
+                    productSearchInput.value = '';
+                    return;
+                }
+                
+                console.log('✅ Customer validation passed - proceeding with product search');
+                
+                // Only reset selected product if the value changed from the selected product
+                const currentValue = e.target.value.trim();
+                console.log('🔍 Input event - currentValue:', currentValue);
+                console.log('🔍 Input event - selectedProduct before check:', this.selectedProduct);
+                if (this.selectedProduct && this.selectedProduct.code.toLowerCase() !== currentValue.toLowerCase()) {
+                    console.log('🔍 Input event - CLEARING selectedProduct because value changed');
+                    this.selectedProduct = null; // Reset only if user is typing something different
+                } else {
+                    console.log('🔍 Input event - selectedProduct preserved');
+                }
+                
                 this.clearProductValidationError();
-                this.showProductSuggestions(e.target.value.trim());
+                console.log('🔍 About to call showProductSuggestions with:', currentValue);
+                this.showProductSuggestions(currentValue);
+                console.log('🔍 showProductSuggestions call completed');
             });
 
             productSearchInput.addEventListener('focus', (e) => {
+                // Check if customer is selected
+                if (!this.currentOrder.customerName || !this.currentOrder.customerId) {
+                    this.showProductValidationError('Önce bir müşteri seçmelisiniz');
+                    productSearchInput.blur();
+                    return;
+                }
+                
                 this.showProductSuggestions(e.target.value.trim());
             });
 
-            // Close suggestions when clicking outside
+            // Close suggestions when clicking outside (with delay to allow item selection)
             document.addEventListener('click', (e) => {
                 const searchWrapper = productSearchInput.parentElement;
                 if (!searchWrapper.contains(e.target)) {
-                    this.hideProductSuggestions();
+                    // Use setTimeout to allow item selection handlers to execute first
+                    setTimeout(() => {
+                        this.hideProductSuggestions();
+                    }, 0);
                 }
             });
+            
+            // Add event delegation for product result clicks with multiple approaches
+            const productResultsContainer = document.getElementById('search-results');
+            if (productResultsContainer) {
+                console.log('🔧 Setting up product event delegation');
+                
+                // Method 1: Event delegation with enhanced debugging
+                productResultsContainer.addEventListener('click', (e) => {
+                    console.log('🔍 Product results container clicked');
+                    console.log('🔍 Clicked element:', e.target);
+                    console.log('🔍 Element classes:', e.target.className);
+                    console.log('🔍 Element dataset:', e.target.dataset);
+                    
+                    const productItem = e.target.closest('.product-result');
+                    console.log('🔍 Closest .product-result found:', productItem);
+                    
+                    if (productItem) {
+                        console.log('🔍 Product item classes:', productItem.className);
+                        console.log('🔍 Product item dataset:', productItem.dataset);
+                        console.log('🔍 Product code from dataset:', productItem.dataset.productCode);
+                        
+                        if (productItem.dataset.productCode) {
+                            console.log('🎯 Product item clicked:', productItem.dataset.productCode);
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                            this.selectProductFromSearch(productItem.dataset.productCode);
+                        } else {
+                            console.log('❌ Product item found but no productCode in dataset');
+                        }
+                    } else {
+                        console.log('❌ No .product-result found with closest()');
+                    }
+                });
+                
+                // Method 2: Fallback with mousedown
+                productResultsContainer.addEventListener('mousedown', (e) => {
+                    const productItem = e.target.closest('.product-result');
+                    if (productItem && productItem.dataset.productCode) {
+                        console.log('🎯 Product mousedown:', productItem.dataset.productCode);
+                        e.preventDefault();
+                        this.selectProductFromSearch(productItem.dataset.productCode);
+                    }
+                });
+            } else {
+                console.error('❌ search-results container not found');
+            }
         }
     }
 
@@ -109,12 +243,7 @@ class OrderManager {
             resultsContainer.innerHTML = `
                 <div class="search-result-item no-results">
                     <p>Müşteri bulunamadı</p>
-                    <button class="btn btn-sm btn-primary" onclick="orderManager.addNewCustomer('${input}')">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6" "/>
-                        </svg>
-                        "${input}" olarak yeni müşteri ekle
-                    </button>
+                    <span class="no-results-hint">Lütfen mevcut müşterilerden birini seçin</span>
                 </div>
             `;
             resultsContainer.style.display = 'block';
@@ -122,7 +251,7 @@ class OrderManager {
         }
 
         resultsContainer.innerHTML = suggestions.map(customer => `
-            <div class="search-result-item customer-result" onclick="orderManager.selectCustomer('${customer.id}')">
+            <div class="search-result-item customer-result" data-customer-id="${customer.id}">
                 <div class="customer-result-info">
                     <div class="customer-result-name">${customer.name}</div>
                     <div class="customer-result-details">
@@ -144,31 +273,46 @@ class OrderManager {
     }
 
     showProductSuggestions(input) {
+        console.log('🔍 showProductSuggestions called with input:', input);
+        
         const resultsContainer = document.getElementById('search-results');
-        if (!resultsContainer || !window.productDatabase) {
+        console.log('🔍 Results container found:', resultsContainer);
+        
+        if (!resultsContainer) {
+            console.log('❌ No results container found');
             return;
         }
-
-        if (!input || input.length < 1) {
-            resultsContainer.style.display = 'none';
+        
+        if (!window.productDatabase && typeof productDatabase === 'undefined') {
+            console.log('❌ No productDatabase available');
             return;
         }
-
-        const suggestions = productDatabase.getProductSuggestions(input);
+        
+        // Use global productDatabase if window.productDatabase is not available
+        const dbToUse = window.productDatabase || productDatabase;
+        console.log('🔍 Using productDatabase:', dbToUse);
+        
+        console.log('🔍 About to call getProductSuggestions on:', dbToUse);
+        const suggestions = dbToUse.getProductSuggestions(input);
+        console.log('🔍 Suggestions returned:', suggestions);
+        console.log('🔍 Suggestions length:', suggestions.length);
         
         if (suggestions.length === 0) {
+            console.log('🔍 No suggestions found, showing no-results message');
             resultsContainer.innerHTML = `
                 <div class="search-result-item no-results">
                     <p>Ürün bulunamadı</p>
-                    <span class="no-results-hint">Ürün kodu veya adını kontrol edin</span>
+                    <span class="no-results-hint">Lütfen mevcut ürünlerden birini seçin</span>
                 </div>
             `;
             resultsContainer.style.display = 'block';
+            console.log('🔍 No-results HTML set and display set to block');
             return;
         }
 
-        resultsContainer.innerHTML = suggestions.map(product => `
-            <div class="search-result-item product-result" onclick="orderManager.selectProductFromSearch('${product.code}')">
+        console.log('🔍 Generating HTML for', suggestions.length, 'suggestions');
+        const htmlContent = suggestions.map(product => `
+            <div class="search-result-item product-result" data-product-code="${product.code}">
                 <div class="product-result-info">
                     <div class="product-result-code">${product.code}</div>
                     <div class="product-result-description">${product.description}</div>
@@ -178,8 +322,13 @@ class OrderManager {
                 </div>
             </div>
         `).join('');
-
+        
+        console.log('🔍 Generated HTML content (first 200 chars):', htmlContent.substring(0, 200));
+        resultsContainer.innerHTML = htmlContent;
         resultsContainer.style.display = 'block';
+        console.log('🔍 HTML set and display set to block');
+        console.log('🔍 Final container innerHTML length:', resultsContainer.innerHTML.length);
+        console.log('🔍 Container display style:', resultsContainer.style.display);
     }
 
     hideProductSuggestions() {
@@ -190,7 +339,10 @@ class OrderManager {
     }
 
     selectProductFromSearch(productCode) {
+        console.log('🎯 selectProductFromSearch called with code:', productCode);
         const product = productDatabase.searchByCode(productCode);
+        console.log('🎯 Found product:', product);
+        
         if (product) {
             const productSearchInput = document.getElementById('product-search');
             productSearchInput.value = product.code;
@@ -198,8 +350,19 @@ class OrderManager {
             this.clearProductValidationError();
             this.hideProductSuggestions();
             
+            // Visual feedback
+            const indicator = document.createElement('div');
+            indicator.innerHTML = '✅ Product Selected: ' + product.description;
+            indicator.style.cssText = 'position:fixed;top:110px;right:10px;background:#28a745;color:white;padding:5px 10px;border-radius:5px;font-size:11px;z-index:10000;';
+            document.body.appendChild(indicator);
+            setTimeout(() => indicator.remove(), 2000);
+            
             // Show product preview
             this.showProductPreview(product);
+            
+            console.log('✅ Product selection completed. selectedProduct:', this.selectedProduct);
+        } else {
+            console.error('❌ Product not found for code:', productCode);
         }
     }
 
@@ -253,12 +416,22 @@ class OrderManager {
     }
 
     selectCustomer(customerId) {
+        console.log('🎯 selectCustomer called with ID:', customerId);
         const customer = customerDatabase.getCustomerById(customerId);
         if (customer) {
+            console.log('🎯 Customer found:', customer);
+            
+            // Visual feedback
+            const indicator = document.createElement('div');
+            indicator.innerHTML = '✅ Customer Selected: ' + customer.name;
+            indicator.style.cssText = 'position:fixed;top:80px;right:10px;background:#28a745;color:white;padding:5px 10px;border-radius:5px;font-size:11px;z-index:10000;';
+            document.body.appendChild(indicator);
+            setTimeout(() => indicator.remove(), 2000);
             const customerNameInput = document.getElementById('customer-name');
             customerNameInput.value = customer.name;
             this.currentOrder.customerName = customer.name;
             this.currentOrder.customerId = customer.id; // Store customer ID for reference
+            this.selectedCustomer = customer; // Set selected customer for validation
             this.clearCustomerValidationError(); // Clear any validation errors
             this.updateOrderSummary();
             this.saveDraftOrder();
@@ -266,23 +439,46 @@ class OrderManager {
             
             // Update customer stats
             customerDatabase.updateCustomerStats(customer.name);
+            
+            // Enable product search now that customer is selected
+            this.updateProductSearchState();
+            
+            console.log('Customer selection completed');
+        } else {
+            console.error('Customer not found for ID:', customerId);
+        }
+    }
+    
+    updateProductSearchState() {
+        const productSearchInput = document.getElementById('product-search');
+        if (productSearchInput) {
+            if (!this.currentOrder.customerName || !this.currentOrder.customerId) {
+                productSearchInput.disabled = true;
+                productSearchInput.placeholder = 'Önce bir müşteri seçin...';
+                productSearchInput.value = '';
+                this.hideProductSuggestions();
+            } else {
+                productSearchInput.disabled = false;
+                productSearchInput.placeholder = 'Kod girin (örn. KP001) veya ada göre arayın...';
+            }
         }
     }
 
-    addNewCustomer(name) {
-        this.hideCustomerSuggestions();
-        
-        // Pre-fill the customer name in the add customer dialog
-        if (window.customerManager) {
-            customerManager.showAddCustomerDialog();
-            setTimeout(() => {
-                const nameInput = document.getElementById('modal-customer-name');
-                if (nameInput) {
-                    nameInput.value = name;
-                }
-            }, 100);
-        }
-    }
+    // Removed addNewCustomer function - customers can only be selected from existing database
+    // addNewCustomer(name) {
+    //     this.hideCustomerSuggestions();
+    //     
+    //     // Pre-fill the customer name in the add customer dialog
+    //     if (window.customerManager) {
+    //         customerManager.showAddCustomerDialog();
+    //         setTimeout(() => {
+    //             const nameInput = document.getElementById('modal-customer-name');
+    //             if (nameInput) {
+    //                 nameInput.value = name;
+    //             }
+    //         }, 100);
+    //     }
+    // }
 
     validateCustomerName() {
         const customerNameInput = document.getElementById('customer-name');
@@ -394,21 +590,37 @@ class OrderManager {
         const productSearchInput = document.getElementById('product-search');
         const productValue = productSearchInput.value.trim();
 
+        console.log('🔍 validateProductSelection called:');
+        console.log('🔍 productValue:', productValue);
+        console.log('🔍 this.selectedProduct:', this.selectedProduct);
+
         // Clear any existing validation errors
         this.clearProductValidationError();
 
         // Check if product field is empty
         if (!productValue) {
+            console.log('🔍 Validation failed: product field is empty');
             this.showProductValidationError('Lütfen bir ürün seçin');
             return false;
         }
 
-        // Check if a valid product is selected
-        if (!this.selectedProduct || this.selectedProduct.code !== productValue) {
-            this.showProductValidationError('Geçerli bir ürün seçin veya listeden bir ürün seçin');
+        // Check if a valid product is selected from dropdown
+        if (!this.selectedProduct) {
+            console.log('🔍 Validation failed: no product selected from dropdown');
+            this.showProductValidationError('Lütfen listeden bir ürün seçin');
             return false;
         }
 
+        // Verify the selected product matches what's in the input (case-insensitive)
+        if (this.selectedProduct.code.toLowerCase() !== productValue.toLowerCase()) {
+            console.log('🔍 Validation failed: product code mismatch');
+            console.log('🔍 selectedProduct.code:', this.selectedProduct.code.toLowerCase());
+            console.log('🔍 productValue:', productValue.toLowerCase());
+            this.showProductValidationError('Lütfen listeden bir ürün seçin');
+            return false;
+        }
+
+        console.log('🔍 Product validation passed!');
         return true;
     }
 
@@ -533,22 +745,34 @@ class OrderManager {
         this.currentOrder.totalMetalWeight = this.currentOrder.items.reduce((sum, item) => sum + ((item.metalWeight || item.weight || 0) * item.quantity), 0);
         this.currentOrder.totalStoneWeight = this.currentOrder.items.reduce((sum, item) => sum + ((item.stoneWeight || 0) * item.quantity), 0);
 
-        document.getElementById('total-items').textContent = this.currentOrder.totalItems;
-        document.getElementById('total-metal-weight').textContent = this.currentOrder.totalMetalWeight.toFixed(2) + 'g';
-        document.getElementById('total-stone-weight').textContent = this.currentOrder.totalStoneWeight.toFixed(2) + 'g';
-        document.getElementById('total-weight').textContent = this.currentOrder.totalWeight.toFixed(2) + 'g';
-        document.getElementById('order-date').textContent = this.currentOrder.date;
-        document.getElementById('summary-customer').textContent = this.currentOrder.customerName || '-';
+        // Safely update DOM elements only if they exist
+        const totalItemsEl = document.getElementById('total-items');
+        if (totalItemsEl) totalItemsEl.textContent = this.currentOrder.totalItems;
+        
+        const totalMetalWeightEl = document.getElementById('total-metal-weight');
+        if (totalMetalWeightEl) totalMetalWeightEl.textContent = this.currentOrder.totalMetalWeight.toFixed(2) + 'g';
+        
+        const totalStoneWeightEl = document.getElementById('total-stone-weight');
+        if (totalStoneWeightEl) totalStoneWeightEl.textContent = this.currentOrder.totalStoneWeight.toFixed(2) + 'g';
+        
+        const totalWeightEl = document.getElementById('total-weight');
+        if (totalWeightEl) totalWeightEl.textContent = this.currentOrder.totalWeight.toFixed(2) + 'g';
+        
+        const orderDateEl = document.getElementById('order-date');
+        if (orderDateEl) orderDateEl.textContent = this.currentOrder.date;
+        
+        const summaryCustomerEl = document.getElementById('summary-customer');
+        if (summaryCustomerEl) summaryCustomerEl.textContent = this.currentOrder.customerName || '-';
 
         const orderSummary = document.getElementById('order-summary');
         const orderActions = document.getElementById('order-actions');
         
         if (this.currentOrder.items.length > 0) {
-            orderSummary.style.display = 'block';
-            orderActions.style.display = 'block';
+            if (orderSummary) orderSummary.style.display = 'block';
+            if (orderActions) orderActions.style.display = 'block';
         } else {
-            orderSummary.style.display = 'none';
-            orderActions.style.display = 'none';
+            if (orderSummary) orderSummary.style.display = 'none';
+            if (orderActions) orderActions.style.display = 'none';
         }
     }
 
@@ -687,7 +911,7 @@ class OrderManager {
         }
     }
 
-    generatePDF() {
+    async generatePDF() {
         if (this.currentOrder.items.length === 0) {
             this.showError('PDF oluşturmak için siparişte öğe yok');
             return;
@@ -699,20 +923,21 @@ class OrderManager {
             return;
         }
 
-        // Try jsPDF first
-        if (typeof window.jsPDF !== 'undefined') {
-            try {
-                const pdfGenerator = new PDFGenerator();
-                pdfGenerator.generateWorkOrder(this.currentOrder);
-                this.showSuccess('PDF başarıyla oluşturuldu');
-                
-                // Save to order history
-                this.saveToHistory();
-                return;
-            } catch (error) {
-                console.error('jsPDF error:', error);
-                this.showError('jsPDF başarısız, alternatif yöntem deneniyor...');
-            }
+        // Show loading message
+        this.showSuccess('PDF oluşturuluyor, lütfen bekleyin...');
+
+        try {
+            // Try jsPDF with async loading
+            const pdfGenerator = new PDFGenerator();
+            await pdfGenerator.generateWorkOrder(this.currentOrder);
+            this.showSuccess('PDF başarıyla oluşturuldu');
+            
+            // Save to order history
+            this.saveToHistory();
+            return;
+        } catch (error) {
+            console.error('jsPDF error:', error);
+            this.showError('jsPDF başarısız, alternatif yöntem deneniyor...');
         }
 
         // Fallback to offline PDF generator
