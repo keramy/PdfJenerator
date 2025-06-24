@@ -19,7 +19,7 @@ class PDFGenerator {
                     const success = window.dejaVuFontLoader.addToJsPDF(this.doc);
                     
                     if (success) {
-                        console.log('DejaVu Sans font loaded successfully - full Turkish character support enabled');
+                        logger.info('DejaVu Sans font loaded successfully - full Turkish character support enabled');
                         this.fontLoaded = true;
                         this.useNativeText = true; // Flag to skip character conversion
                         return;
@@ -38,23 +38,23 @@ class PDFGenerator {
                     this.doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
                     this.doc.setFont('DejaVuSans', 'normal');
                     
-                    console.log('DejaVu Sans loaded directly - Turkish characters supported');
+                    logger.info('DejaVu Sans loaded directly - Turkish characters supported');
                     this.fontLoaded = true;
                     this.useNativeText = true;
                     return;
                 }
             } catch (e) {
-                console.log('Direct font loading failed:', e);
+                logger.warn('Direct font loading failed:', e);
             }
             
             // Final fallback: Use Times font with character mapping
             this.setFontStyle('normal');
-            console.log('Using Times font with character mapping for Turkish support');
+            logger.info('Using Times font with character mapping for Turkish support');
             this.fontLoaded = false;
             this.useNativeText = false;
             
         } catch (e) {
-            console.log('Font configuration failed, using Times with character mapping:', e);
+            logger.warn('Font configuration failed, using Times with character mapping:', e);
             this.setFontStyle('normal');
             this.fontLoaded = false;
             this.useNativeText = false;
@@ -151,7 +151,7 @@ class PDFGenerator {
                 this.drawImagePlaceholder(x, y, width, height);
             }
         } catch (error) {
-            console.log('Error adding image to PDF:', error);
+            logger.warn('Error adding image to PDF:', error);
             // Draw placeholder on error
             this.drawImagePlaceholder(x, y, width, height);
         }

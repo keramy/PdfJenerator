@@ -215,7 +215,7 @@ class App {
             orderDate.textContent = new Date().toLocaleDateString();
         }
 
-        console.log('Jewelry Work Order System initialized successfully');
+        logger.info('Jewelry Work Order System initialized successfully');
     }
 
     // Utility methods
@@ -256,27 +256,7 @@ window.addEventListener('unhandledrejection', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new App();
     
-    // Show fix status indicator
-    setTimeout(() => {
-        const fixStatusEl = document.getElementById('fix-status');
-        
-        // Check if fixes are active
-        const hasEventDelegation = typeof orderManager !== 'undefined' && 
-                                   typeof orderManager.selectCustomer === 'function';
-        const hasJsPDFEnhancement = typeof window.ensureJsPDF === 'function';
-        
-        if (hasEventDelegation && hasJsPDFEnhancement && fixStatusEl) {
-            fixStatusEl.style.display = 'block';
-            // Hide after 3 seconds
-            setTimeout(() => {
-                fixStatusEl.style.opacity = '0';
-                fixStatusEl.style.transition = 'opacity 0.5s';
-                setTimeout(() => {
-                    fixStatusEl.style.display = 'none';
-                }, 500);
-            }, 3000);
-        }
-    }, 2000);
+    // Production ready - no debug indicators needed
 });
 
 // Enhanced jsPDF detection

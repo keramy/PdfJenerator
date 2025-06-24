@@ -117,11 +117,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Fix Status Indicator -->
-        <div id="fix-status" style="position: fixed; top: 10px; right: 10px; background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 9999; display: none;">
-            ✅ Fixes Active
-        </div>
-        
         <!-- Header -->
         <header class="app-header">
             <div class="header-content">
@@ -321,20 +316,6 @@
                                     <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
                                 PDF Oluştur
-                            </button>
-                            <button class="btn btn-secondary" onclick="window.open('pdf-test.html', '_blank')" title="Test PDF functionality">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
-                                </svg>
-                                Test PDF
-                            </button>
-                            <button class="btn btn-secondary" onclick="window.open('debug-pdf.html', '_blank')" title="Debug PDF issues">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M4 6h16l-1 10c0 1-1 2-2 2H7c-1 0-2-1-2-2L4 6z"/>
-                                    <circle cx="12" cy="11" r="1"/>
-                                    <path d="m7.5 4.5 9 9M16.5 4.5l-9 9"/>
-                                </svg>
-                                Debug
                             </button>
                         </div>
                     </div>
@@ -540,6 +521,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="config.js?v=1750756400"></script>
+    <script src="js/logger.js?v=1750756400"></script>
     <script src="js/database.js?v=1750755300"></script>
     <script src="js/dejavuFont.js?v=1750756300"></script>
     <script src="js/imageHandler.js?v=1750755268"></script>

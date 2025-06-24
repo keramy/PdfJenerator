@@ -1,0 +1,14 @@
+# Robots.txt for LIZAR KUYUMCULUK Work Order System
+
+# Allow all robots
+User-agent: *
+Allow: /
+
+# Disallow access to JavaScript and data files
+Disallow: /js/
+Disallow: /data/
+Disallow: /fonts/
+Disallow: /*.json
+
+# Sitemap location (if available)
+# Sitemap: https://yourdomain.com/sitemap.xml
