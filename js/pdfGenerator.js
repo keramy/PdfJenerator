@@ -341,26 +341,27 @@ class PDFGenerator {
         this.doc.setDrawColor(255, 255, 255);
         this.doc.setLineWidth(0.2);
         
-        // Column positions with image column and better spacing
+        // Column positions with improved alignment
         const columns = [
-            { text: this.formatTurkishText('Resim'), x: this.margin + 2, width: 18 },
-            { text: '#', x: this.margin + 20, width: 12 },
-            { text: 'Kod', x: this.margin + 32, width: 25 },
-            { text: this.formatTurkishText('Açıklama'), x: this.margin + 57, width: 60 },
-            { text: 'Adet', x: this.margin + 117, width: 15 },
-            { text: 'Metal(g)', x: this.margin + 132, width: 20 },
-            { text: this.formatTurkishText('Taş(g)'), x: this.margin + 152, width: 18 },
-            { text: 'Toplam(g)', x: this.margin + 170, width: 25 }
+            { text: this.formatTurkishText('Resim'), x: this.margin + 11, width: 18, align: 'center' },
+            { text: '#', x: this.margin + 26, width: 12, align: 'center' },
+            { text: 'Kod', x: this.margin + 44, width: 25, align: 'center' },
+            { text: this.formatTurkishText('Açıklama'), x: this.margin + 87, width: 60, align: 'center' },
+            { text: 'Adet', x: this.margin + 124, width: 15, align: 'center' },
+            { text: 'Metal(g)', x: this.margin + 142, width: 20, align: 'center' },
+            { text: this.formatTurkishText('Taş(g)'), x: this.margin + 161, width: 18, align: 'center' },
+            { text: 'Toplam(g)', x: this.margin + 182, width: 25, align: 'center' }
         ];
         
-        // Draw header text in white
+        // Draw header text in white with center alignment
         this.doc.setTextColor(255, 255, 255);
         columns.forEach((col, index) => {
-            this.doc.text(col.text, col.x, headerY + 7);
+            this.doc.text(col.text, col.x, headerY + 7, { align: col.align || 'left' });
             
             // Draw vertical lines between columns
             if (index < columns.length - 1) {
-                this.doc.line(col.x + col.width - 2, headerY, col.x + col.width - 2, headerY + rowHeight);
+                const lineX = this.margin + [18, 30, 55, 115, 130, 150, 168][index] + 2;
+                this.doc.line(lineX, headerY, lineX, headerY + rowHeight);
             }
         });
         
@@ -393,20 +394,20 @@ class PDFGenerator {
         // Add product image first (if available) - smaller size for compact layout
         this.addProductImage(item, this.margin + 2, this.currentY + 1.5, 12, 12);
         
-        // Column data matching header positions (updated for new layout)
+        // Column data with improved alignment matching headers
         const columns = [
-            { text: itemNumber.toString(), x: this.margin + 20 },
-            { text: item.code, x: this.margin + 32 },
-            { text: this.formatTurkishText(this.truncateText(item.description, 35)), x: this.margin + 57 },
-            { text: item.quantity.toString(), x: this.margin + 117 },
-            { text: (item.metalWeight || 0).toFixed(2), x: this.margin + 132 },
-            { text: item.stoneWeight ? item.stoneWeight.toFixed(2) : '-', x: this.margin + 152 },
-            { text: ((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2), x: this.margin + 170 }
+            { text: itemNumber.toString(), x: this.margin + 26, align: 'center' },
+            { text: item.code, x: this.margin + 44, align: 'center' },
+            { text: this.formatTurkishText(this.truncateText(item.description, 35)), x: this.margin + 57, align: 'left' },
+            { text: item.quantity.toString(), x: this.margin + 124, align: 'center' },
+            { text: (item.metalWeight || 0).toFixed(2), x: this.margin + 142, align: 'center' },
+            { text: item.stoneWeight ? item.stoneWeight.toFixed(2) : '-', x: this.margin + 161, align: 'center' },
+            { text: ((item.totalWeight || item.weight || 0) * item.quantity).toFixed(2), x: this.margin + 182, align: 'center' }
         ];
         
-        // Draw column data
+        // Draw column data with proper alignment
         columns.forEach(col => {
-            this.doc.text(col.text, col.x, this.currentY + 10); // Adjusted for optimized row height
+            this.doc.text(col.text, col.x, this.currentY + 10, { align: col.align || 'left' });
         });
         
         this.currentY += rowHeight;
@@ -451,9 +452,6 @@ class PDFGenerator {
         this.doc.setTextColor(0, 0, 0);
         this.doc.text(this.formatTurkishText('Personel İmzası: ________________________'), this.margin, footerY + 5);
         
-        // Footer line above signature
-        this.doc.setLineWidth(0.3);
-        this.doc.setDrawColor(180, 180, 180);
-        this.doc.line(this.margin, footerY - 5, this.pageWidth - this.margin, footerY - 5);
+        // Footer line removed for cleaner appearance
     }
 }
