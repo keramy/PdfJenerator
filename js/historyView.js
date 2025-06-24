@@ -15,15 +15,6 @@ class HistoryView {
         }, 100);
     }
 
-    getStatusText(status) {
-        const statusMap = {
-            'completed': 'Tamamlandı',
-            'in_production': 'Üretimde',
-            'pending': 'Beklemede',
-            'cancelled': 'İptal Edildi'
-        };
-        return statusMap[status] || status;
-    }
 
     initializeHistoryTab() {
         const historyTab = document.getElementById('history-tab');
@@ -71,28 +62,26 @@ class HistoryView {
 
                 <div class="history-filters">
                     <div class="filter-group">
-                        <input type="text" id="history-search" placeholder="Sipariş no, müşteri veya ürüne göre ara..." class="form-input">
+                        <input type="text" id="history-search" placeholder="Sipariş no, müşteri veya ürüne göre ara..." class="form-input" onkeyup="historyView.applyFilters()">
                     </div>
                     <div class="filter-group">
-                        <input type="date" id="filter-date-from" class="form-input" placeholder="Başlangıç tarihi">
-                    </div>
-                    <div class="filter-group">
-                        <input type="date" id="filter-date-to" class="form-input" placeholder="Bitiş tarihi">
-                    </div>
-                    <div class="filter-group">
-                        <select id="filter-status" class="form-select">
-                            <option value="">Tüm Durumlar</option>
-                            <option value="completed">Tamamlandı</option>
-                            <option value="in_production">Üretimde</option>
-                            <option value="cancelled">İptal Edildi</option>
+                        <select id="time-filter" class="form-select" onchange="historyView.applyFilters()">
+                            <option value="">Tüm Zamanlar</option>
+                            <option value="last_week">Son Hafta</option>
+                            <option value="last_month">Son Ay</option>
+                            <option value="last_year">Son Yıl</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="historyView.applyFilters()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" "/>
-                        </svg>
-                        Filtrele
-                    </button>
+                    <div class="filter-group">
+                        <select id="sort-filter" class="form-select" onchange="historyView.applySortFilter()">
+                            <option value="date_desc">En Yeni Önce</option>
+                            <option value="date_asc">En Eski Önce</option>
+                            <option value="customer_asc">Müşteri A-Z</option>
+                            <option value="customer_desc">Müşteri Z-A</option>
+                            <option value="weight_desc">Ağırlık Yüksek-Düşük</option>
+                            <option value="weight_asc">Ağırlık Düşük-Yüksek</option>
+                        </select>
+                    </div>
                     <button class="btn btn-secondary" onclick="historyView.clearFilters()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 6L6 18M6 6l12 12" "/>
@@ -123,12 +112,11 @@ class HistoryView {
                     <table class="history-table">
                         <thead>
                             <tr>
-                                <th onclick="historyView.sortBy('orderNumber')">Sipariş No <span class="sort-icon">↕</span></th>
-                                <th onclick="historyView.sortBy('date')">Tarih <span class="sort-icon">↕</span></th>
-                                <th onclick="historyView.sortBy('customerName')">Müşteri <span class="sort-icon">↕</span></th>
+                                <th>Sipariş No</th>
+                                <th>Tarih</th>
+                                <th>Müşteri</th>
                                 <th>Adet</th>
-                                <th onclick="historyView.sortBy('totalWeight')">Ağırlık <span class="sort-icon">↕</span></th>
-                                <th>Durum</th>
+                                <th>Ağırlık</th>
                                 <th>İşlemler</th>
                             </tr>
                         </thead>
@@ -289,41 +277,82 @@ class HistoryView {
     }
 
     getFilteredOrders() {
-        const searchTerm = document.getElementById('history-search')?.value || '';
+        let orders = orderHistory.getAllOrders();
         
+        // Apply search filter
+        const searchTerm = document.getElementById('history-search')?.value || '';
         if (searchTerm) {
-            return orderHistory.searchOrders(searchTerm);
+            orders = orderHistory.searchOrders(searchTerm);
         }
-
-        const filters = {
-            dateFrom: document.getElementById('filter-date-from')?.value || '',
-            dateTo: document.getElementById('filter-date-to')?.value || '',
-            status: document.getElementById('filter-status')?.value || ''
-        };
-
-        if (Object.values(filters).some(v => v)) {
-            return orderHistory.filterOrders(filters);
+        
+        // Apply time filter
+        const timeFilter = document.getElementById('time-filter')?.value || '';
+        if (timeFilter) {
+            orders = this.getTimeFilteredOrders(orders, timeFilter);
         }
+        
+        return orders;
+    }
 
-        return orderHistory.getAllOrders();
+    getTimeFilteredOrders(orders, timeFilter) {
+        const now = new Date();
+        let filterDate;
+        
+        switch (timeFilter) {
+            case 'last_week':
+                filterDate = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+                break;
+            case 'last_month':
+                filterDate = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+                break;
+            case 'last_year':
+                filterDate = new Date(now.getTime() - (365 * 24 * 60 * 60 * 1000));
+                break;
+            default:
+                return orders;
+        }
+        
+        return orders.filter(order => {
+            const orderDate = new Date(order.date);
+            return orderDate >= filterDate;
+        });
     }
 
     sortOrders(orders) {
+        const sortFilter = document.getElementById('sort-filter')?.value || 'date_desc';
+        const [field, direction] = sortFilter.split('_');
+        
         return orders.sort((a, b) => {
-            let aVal = a[this.sortField];
-            let bVal = b[this.sortField];
-
-            if (this.sortField === 'date') {
-                aVal = new Date(aVal);
-                bVal = new Date(bVal);
+            let aVal, bVal;
+            
+            switch (field) {
+                case 'date':
+                    aVal = new Date(a.date);
+                    bVal = new Date(b.date);
+                    break;
+                case 'customer':
+                    aVal = (a.customerName || '').toLowerCase();
+                    bVal = (b.customerName || '').toLowerCase();
+                    break;
+                case 'weight':
+                    aVal = a.totalWeight || 0;
+                    bVal = b.totalWeight || 0;
+                    break;
+                default:
+                    aVal = a[field];
+                    bVal = b[field];
             }
 
-            if (this.sortDirection === 'asc') {
+            if (direction === 'asc') {
                 return aVal > bVal ? 1 : -1;
             } else {
                 return aVal < bVal ? 1 : -1;
             }
         });
+    }
+
+    applySortFilter() {
+        this.loadHistory();
     }
 
     renderTable(orders) {
@@ -333,7 +362,7 @@ class HistoryView {
         if (orders.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem;">
+                    <td colspan="6" style="text-align: center; padding: 2rem;">
                         <p>Sipariş bulunamadı</p>
                     </td>
                 </tr>
@@ -356,30 +385,6 @@ class HistoryView {
                     </div>
                 </td>
                 <td>${order.totalWeight.toFixed(2)}g</td>
-                <td>
-                    <div class="status-container">
-                        ${order.status === 'in_production' ? `
-                            <label class="status-toggle">
-                                <input type="checkbox" onclick="historyView.toggleOrderStatus('${order.id}')" title="Tamamlandı olarak işaretle">
-                                <span class="status-badge status-in_production">
-                                    ${this.getStatusText('in_production')}
-                                </span>
-                            </label>
-                        ` : `
-                            <span class="status-badge status-${order.status || 'completed'}">
-                                ${this.getStatusText(order.status || 'completed')}
-                            </span>
-                            ${order.status === 'completed' ? `
-                                <button class="btn-revert" onclick="historyView.revertOrderStatus('${order.id}')" title="Üretime geri al">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M3 12a9 9 0 009-9 9.75 9.75 0 00-6.74 2.74L3 8"/>
-                                        <path d="M3 3v5h5"/>
-                                    </svg>
-                                </button>
-                            ` : ''}
-                        `}
-                    </div>
-                </td>
                 <td>
                     <div class="action-buttons">
                         <button class="btn-icon" onclick="historyView.viewOrderDetails('${order.id}')" title="Detayları gör">
@@ -460,15 +465,6 @@ class HistoryView {
         this.loadHistory();
     }
 
-    sortBy(field) {
-        if (this.sortField === field) {
-            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            this.sortField = field;
-            this.sortDirection = 'desc';
-        }
-        this.loadHistory();
-    }
 
     applyFilters() {
         this.currentPage = 1;
@@ -477,9 +473,8 @@ class HistoryView {
 
     clearFilters() {
         document.getElementById('history-search').value = '';
-        document.getElementById('filter-date-from').value = '';
-        document.getElementById('filter-date-to').value = '';
-        document.getElementById('filter-status').value = '';
+        document.getElementById('time-filter').value = '';
+        document.getElementById('sort-filter').value = 'date_desc';
         this.currentPage = 1;
         this.loadHistory();
     }
@@ -512,7 +507,6 @@ class HistoryView {
                     <div class="order-info">
                         <p><strong>Tarih:</strong> ${new Date(order.date).toLocaleString()}</p>
                         <p><strong>Müşteri:</strong> ${order.customerName || 'Belirtilmemiş'}</p>
-                        <p><strong>Durum:</strong> ${this.getStatusText(order.status || 'completed')}</p>
                         <p><strong>Toplam Adet:</strong> ${order.totalItems}</p>
                         <p><strong>Metal Ağırlığı:</strong> ${(order.totalMetalWeight || order.totalWeight || 0).toFixed(2)}g</p>
                         <p><strong>Taş Ağırlığı:</strong> ${(order.totalStoneWeight || 0).toFixed(2)}g</p>
@@ -591,33 +585,7 @@ class HistoryView {
         }
     }
 
-    toggleOrderStatus(orderId) {
-        const order = orderHistory.getOrder(orderId);
-        if (!order) return;
 
-        // Update status from in_production to completed
-        if (order.status === 'in_production') {
-            orderHistory.updateOrderStatus(orderId, 'completed');
-            this.loadHistory();
-            if (window.orderManager) {
-                window.orderManager.showSuccess('Sipariş tamamlandı olarak işaretlendi');
-            }
-        }
-    }
-
-    revertOrderStatus(orderId) {
-        const order = orderHistory.getOrder(orderId);
-        if (!order) return;
-
-        // Update status from completed back to in_production
-        if (order.status === 'completed') {
-            orderHistory.updateOrderStatus(orderId, 'in_production');
-            this.loadHistory();
-            if (window.orderManager) {
-                window.orderManager.showSuccess('Sipariş üretime geri alındı');
-            }
-        }
-    }
 
     deleteOrder(orderId) {
         if (confirm('Bu siparişi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
@@ -664,7 +632,6 @@ class HistoryView {
     <Cell><Data ss:Type="String">Toplam Ağırlık (g)</Data></Cell>
     <Cell><Data ss:Type="String">Metal Ağırlığı (g)</Data></Cell>
     <Cell><Data ss:Type="String">Taş Ağırlığı (g)</Data></Cell>
-    <Cell><Data ss:Type="String">Durum</Data></Cell>
    </Row>`;
 
         orders.forEach(order => {
@@ -677,7 +644,6 @@ class HistoryView {
     <Cell><Data ss:Type="Number">${order.totalWeight.toFixed(2)}</Data></Cell>
     <Cell><Data ss:Type="Number">${(order.totalMetalWeight || 0).toFixed(2)}</Data></Cell>
     <Cell><Data ss:Type="Number">${(order.totalStoneWeight || 0).toFixed(2)}</Data></Cell>
-    <Cell><Data ss:Type="String">${this.getStatusText(order.status || 'completed')}</Data></Cell>
    </Row>`;
         });
 
@@ -722,7 +688,6 @@ class HistoryView {
     <Cell><Data ss:Type="String">Toplam Ağırlık (g)</Data></Cell>
     <Cell><Data ss:Type="String">Metal Ağırlığı (g)</Data></Cell>
     <Cell><Data ss:Type="String">Taş Ağırlığı (g)</Data></Cell>
-    <Cell><Data ss:Type="String">Durum</Data></Cell>
    </Row>
    <Row>
     <Cell><Data ss:Type="String">WO-20240101-1200</Data></Cell>
@@ -732,7 +697,6 @@ class HistoryView {
     <Cell><Data ss:Type="Number">25.50</Data></Cell>
     <Cell><Data ss:Type="Number">20.00</Data></Cell>
     <Cell><Data ss:Type="Number">5.50</Data></Cell>
-    <Cell><Data ss:Type="String">Üretimde</Data></Cell>
    </Row>
   </Table>
  </Worksheet>

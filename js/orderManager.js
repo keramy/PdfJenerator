@@ -1,6 +1,5 @@
 class OrderManager {
     constructor() {
-        console.log('🚀 OrderManager constructor called - NEW VERSION');
         this.currentOrder = {
             items: [],
             orderNumber: this.generateOrderNumber(),
@@ -10,15 +9,6 @@ class OrderManager {
             totalItems: 0
         };
         this.loadDraftOrder();
-        
-        // Add visual indicator that new version is loaded
-        setTimeout(() => {
-            const indicator = document.createElement('div');
-            indicator.innerHTML = '🔄 NEW VERSION LOADED';
-            indicator.style.cssText = 'position:fixed;top:50px;right:10px;background:#007bff;color:white;padding:5px 10px;border-radius:5px;font-size:11px;z-index:10000;';
-            document.body.appendChild(indicator);
-            setTimeout(() => indicator.remove(), 3000);
-        }, 100);
         
         this.setupCustomerNameListener();
         this.setupProductSearchListener();
@@ -350,12 +340,7 @@ class OrderManager {
             this.clearProductValidationError();
             this.hideProductSuggestions();
             
-            // Visual feedback
-            const indicator = document.createElement('div');
-            indicator.innerHTML = '✅ Product Selected: ' + product.description;
-            indicator.style.cssText = 'position:fixed;top:110px;right:10px;background:#28a745;color:white;padding:5px 10px;border-radius:5px;font-size:11px;z-index:10000;';
-            document.body.appendChild(indicator);
-            setTimeout(() => indicator.remove(), 2000);
+            // Product selection completed silently
             
             // Show product preview
             this.showProductPreview(product);
@@ -421,12 +406,7 @@ class OrderManager {
         if (customer) {
             console.log('🎯 Customer found:', customer);
             
-            // Visual feedback
-            const indicator = document.createElement('div');
-            indicator.innerHTML = '✅ Customer Selected: ' + customer.name;
-            indicator.style.cssText = 'position:fixed;top:80px;right:10px;background:#28a745;color:white;padding:5px 10px;border-radius:5px;font-size:11px;z-index:10000;';
-            document.body.appendChild(indicator);
-            setTimeout(() => indicator.remove(), 2000);
+            // Customer selection completed silently
             const customerNameInput = document.getElementById('customer-name');
             customerNameInput.value = customer.name;
             this.currentOrder.customerName = customer.name;
@@ -874,9 +854,27 @@ class OrderManager {
 
     saveDraftOrder() {
         try {
+            // Auto-save as default draft (existing behavior)
             localStorage.setItem('jewelryOrderDraft', JSON.stringify(this.currentOrder));
         } catch (error) {
             console.error('Error saving draft:', error);
+        }
+    }
+
+    saveDraftWithName(draftName) {
+        try {
+            const timestamp = new Date().getTime();
+            const draftKey = `jewelryOrderDraft_${timestamp}`;
+            const draftData = {
+                ...this.currentOrder,
+                draftName: draftName || `Taslak ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+                savedAt: timestamp
+            };
+            localStorage.setItem(draftKey, JSON.stringify(draftData));
+            return draftKey;
+        } catch (error) {
+            console.error('Error saving named draft:', error);
+            return null;
         }
     }
 
@@ -923,9 +921,44 @@ class OrderManager {
             return;
         }
 
-        // Show loading message
-        this.showSuccess('PDF oluşturuluyor, lütfen bekleyin...');
+        // Show preview instead of direct download
+        await this.previewPDF();
+    }
 
+    async previewPDF() {
+        try {
+            // Generate PDF blob for preview (silent generation - no notifications)
+            const pdfGenerator = new PDFGenerator();
+            const pdfResult = await pdfGenerator.generateWorkOrderBlob(this.currentOrder);
+            
+            // Create URL for the blob
+            const pdfUrl = URL.createObjectURL(pdfResult.blob);
+            
+            // Store the blob and filename for later download
+            this.currentPDFBlob = pdfResult.blob;
+            this.currentPDFFilename = pdfResult.filename;
+            
+            // Show the PDF in preview modal
+            const iframe = document.getElementById('pdf-preview-frame');
+            iframe.src = pdfUrl;
+            
+            // Open the modal
+            const modal = document.getElementById('pdf-preview-modal');
+            modal.style.display = 'block';
+            
+            // Clean up URL after a delay to prevent memory leaks
+            setTimeout(() => URL.revokeObjectURL(pdfUrl), 10000);
+            
+        } catch (error) {
+            console.error('PDF preview error:', error);
+            this.showError('PDF önizleme başarısız. Doğrudan indirme deneniyor...');
+            
+            // Fallback to direct download
+            await this.fallbackToDirectDownload();
+        }
+    }
+
+    async fallbackToDirectDownload() {
         try {
             // Try jsPDF with async loading
             const pdfGenerator = new PDFGenerator();
@@ -1012,16 +1045,33 @@ class OrderManager {
             if (savedOrder) {
                 this.showSuccess('Sipariş geçmişe kaydedildi');
                 
-                // Ask user if they want to start a new order
-                setTimeout(() => {
-                    if (confirm('Sipariş kaydedildi. Yeni bir sipariş başlatmak ister misiniz?')) {
-                        this.clearOrder();
-                    }
-                }, 1000);
             } else {
                 this.showError('Siparişi geçmişe kaydetme başarısız');
             }
         }
+    }
+
+    startNewOrder() {
+        if (this.currentOrder.items.length === 0) {
+            this.showError('Yeni sipariş oluşturmak için mevcut sipariş zaten boş');
+            return;
+        }
+        
+        this.currentOrder.items = [];
+        this.currentOrder.orderNumber = this.generateOrderNumber();
+        this.currentOrder.date = new Date().toLocaleDateString();
+        this.currentOrder.customerName = '';
+        
+        // Clear customer name input
+        const customerNameInput = document.getElementById('customer-name');
+        if (customerNameInput) {
+            customerNameInput.value = '';
+        }
+        
+        this.updateOrderSummary();
+        this.renderOrderItems();
+        this.clearDraftOrder();
+        this.showSuccess('Yeni sipariş oluşturuldu');
     }
 
     viewHistory() {
@@ -1081,6 +1131,286 @@ class OrderManager {
         
         this.showSuccess(`Sipariş geçmişten yüklendi (Orijinal: ${historicalOrder.orderNumber})`);
     }
+
+    // Draft Management Methods
+    getDraftsList() {
+        const drafts = [];
+        try {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('jewelryOrderDraft_')) {
+                    const draftData = localStorage.getItem(key);
+                    if (draftData) {
+                        const draft = JSON.parse(draftData);
+                        drafts.push({
+                            key: key,
+                            name: draft.draftName || 'İsimsiz Taslak',
+                            customerName: draft.customerName || 'Müşteri belirtilmemiş',
+                            itemCount: draft.items ? draft.items.length : 0,
+                            savedAt: draft.savedAt || 0,
+                            data: draft
+                        });
+                    }
+                }
+            }
+            
+            // Sort by saved date (newest first)
+            drafts.sort((a, b) => b.savedAt - a.savedAt);
+            
+            // Also include the default draft if it exists
+            const defaultDraft = localStorage.getItem('jewelryOrderDraft');
+            if (defaultDraft) {
+                const draft = JSON.parse(defaultDraft);
+                if (draft.items && draft.items.length > 0) {
+                    drafts.unshift({
+                        key: 'jewelryOrderDraft',
+                        name: 'Otomatik Taslak',
+                        customerName: draft.customerName || 'Müşteri belirtilmemiş',
+                        itemCount: draft.items ? draft.items.length : 0,
+                        savedAt: 0,
+                        data: draft,
+                        isDefault: true
+                    });
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error getting drafts list:', error);
+        }
+        return drafts;
+    }
+
+    viewDrafts() {
+        const modal = document.getElementById('draft-modal');
+        if (modal) {
+            this.renderDraftsList();
+            modal.style.display = 'block';
+        }
+    }
+
+    closeDraftModal() {
+        const modal = document.getElementById('draft-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    renderDraftsList() {
+        const draftsContainer = document.getElementById('drafts-list');
+        if (!draftsContainer) return;
+
+        const drafts = this.getDraftsList();
+        
+        if (drafts.length === 0) {
+            draftsContainer.innerHTML = `
+                <div class="no-drafts">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                    </svg>
+                    <p>Henüz kaydedilmiş taslak bulunmuyor</p>
+                </div>
+            `;
+            return;
+        }
+
+        const draftsHTML = drafts.map(draft => {
+            const date = draft.savedAt ? new Date(draft.savedAt).toLocaleDateString() : 'Bilinmiyor';
+            const time = draft.savedAt ? new Date(draft.savedAt).toLocaleTimeString() : '';
+            
+            return `
+                <div class="draft-item">
+                    <div class="draft-info">
+                        <div class="draft-name">${draft.name}</div>
+                        <div class="draft-details">
+                            <span class="draft-customer">👤 ${draft.customerName}</span>
+                            <span class="draft-items">📦 ${draft.itemCount} öğe</span>
+                            <span class="draft-date">📅 ${date} ${time}</span>
+                        </div>
+                    </div>
+                    <div class="draft-actions">
+                        <button class="btn btn-sm btn-primary" onclick="orderManager.loadSpecificDraft('${draft.key}')" title="Taslağı Yükle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                        </button>
+                        ${!draft.isDefault ? `
+                            <button class="btn btn-sm btn-secondary" onclick="orderManager.renameDraft('${draft.key}')" title="Yeniden Adlandır">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="orderManager.deleteDraft('${draft.key}')" title="Sil">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
+                                    <path d="M10 11v6M14 11v6"/>
+                                </svg>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        draftsContainer.innerHTML = draftsHTML;
+    }
+
+    loadSpecificDraft(draftKey) {
+        try {
+            const draftData = localStorage.getItem(draftKey);
+            if (draftData) {
+                const draft = JSON.parse(draftData);
+                if (draft.items && draft.items.length > 0) {
+                    this.currentOrder = {
+                        items: draft.items,
+                        orderNumber: this.generateOrderNumber(), // Generate new order number
+                        date: new Date().toLocaleDateString(), // Use current date
+                        customerName: draft.customerName || '',
+                        totalWeight: draft.totalWeight || 0,
+                        totalItems: draft.totalItems || 0
+                    };
+                    
+                    // Restore customer name in input field
+                    const customerNameInput = document.getElementById('customer-name');
+                    if (customerNameInput && this.currentOrder.customerName) {
+                        customerNameInput.value = this.currentOrder.customerName;
+                    }
+                    
+                    this.updateOrderSummary();
+                    this.renderOrderItems();
+                    this.closeDraftModal();
+                    this.showSuccess(`Taslak yüklendi: ${draft.draftName || 'İsimsiz Taslak'}`);
+                } else {
+                    this.showError('Taslakta öğe bulunamadı');
+                }
+            } else {
+                this.showError('Taslak bulunamadı');
+            }
+        } catch (error) {
+            console.error('Error loading specific draft:', error);
+            this.showError('Taslak yüklenirken hata oluştu');
+        }
+    }
+
+    deleteDraft(draftKey) {
+        if (draftKey === 'jewelryOrderDraft') {
+            this.showError('Otomatik taslak silinemez');
+            return;
+        }
+        
+        const draft = localStorage.getItem(draftKey);
+        if (draft) {
+            const draftData = JSON.parse(draft);
+            const draftName = draftData.draftName || 'İsimsiz Taslak';
+            
+            if (confirm(`"${draftName}" taslağını silmek istediğinizden emin misiniz?`)) {
+                try {
+                    localStorage.removeItem(draftKey);
+                    this.renderDraftsList();
+                    this.showSuccess('Taslak silindi');
+                } catch (error) {
+                    console.error('Error deleting draft:', error);
+                    this.showError('Taslak silinirken hata oluştu');
+                }
+            }
+        }
+    }
+
+    renameDraft(draftKey) {
+        const draft = localStorage.getItem(draftKey);
+        if (draft) {
+            const draftData = JSON.parse(draft);
+            const currentName = draftData.draftName || 'İsimsiz Taslak';
+            const newName = prompt('Yeni taslak adını girin:', currentName);
+            
+            if (newName && newName.trim() && newName.trim() !== currentName) {
+                try {
+                    draftData.draftName = newName.trim();
+                    localStorage.setItem(draftKey, JSON.stringify(draftData));
+                    this.renderDraftsList();
+                    this.showSuccess('Taslak yeniden adlandırıldı');
+                } catch (error) {
+                    console.error('Error renaming draft:', error);
+                    this.showError('Taslak yeniden adlandırılırken hata oluştu');
+                }
+            }
+        }
+    }
+
+    saveDraftWithCustomName() {
+        if (this.currentOrder.items.length === 0) {
+            this.showError('Kaydedilecek öğe yok');
+            return;
+        }
+
+        const draftName = prompt('Taslak adını girin:', `Taslak ${new Date().toLocaleDateString()}`);
+        if (draftName && draftName.trim()) {
+            const draftKey = this.saveDraftWithName(draftName.trim());
+            if (draftKey) {
+                this.renderDraftsList();
+                this.showSuccess('Taslak kaydedildi');
+            } else {
+                this.showError('Taslak kaydedilemedi');
+            }
+        }
+    }
+}
+
+// Global functions for PDF preview modal
+function closePDFPreview() {
+    const modal = document.getElementById('pdf-preview-modal');
+    modal.style.display = 'none';
+    
+    // Clear iframe source to free memory
+    const iframe = document.getElementById('pdf-preview-frame');
+    iframe.src = '';
+    
+    // Clear stored PDF data
+    if (orderManager.currentPDFBlob) {
+        orderManager.currentPDFBlob = null;
+        orderManager.currentPDFFilename = null;
+    }
+}
+
+function downloadPDFFromPreview() {
+    if (!orderManager.currentPDFBlob || !orderManager.currentPDFFilename) {
+        orderManager.showError('PDF verileri bulunamadı');
+        return;
+    }
+    
+    try {
+        // Create download link and trigger download
+        const url = URL.createObjectURL(orderManager.currentPDFBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = orderManager.currentPDFFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Close modal and show success
+        closePDFPreview();
+        orderManager.showSuccess('PDF başarıyla indirildi');
+        
+        // Save to order history
+        orderManager.saveToHistory();
+        
+    } catch (error) {
+        console.error('PDF download error:', error);
+        orderManager.showError('PDF indirme başarısız');
+    }
+}
+
+function regeneratePDFPreview() {
+    // Close current preview
+    closePDFPreview();
+    
+    // Generate new preview
+    setTimeout(() => {
+        orderManager.previewPDF();
+    }, 100);
 }
 
 const orderManager = new OrderManager();

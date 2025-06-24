@@ -1265,6 +1265,73 @@ svg.tab-icon,
     background: #f7fafc;
 }
 
+/* PDF Preview Modal Styles */
+.pdf-preview-modal .modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    width: 95%;
+    height: 95%;
+    margin: 2.5vh auto;
+}
+
+.pdf-preview-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pdf-preview-body {
+    flex: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#pdf-preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#pdf-preview-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    min-height: 500px;
+    background: #f5f5f5;
+}
+
+.pdf-preview-modal .modal-footer {
+    flex-shrink: 0;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    justify-content: space-between;
+}
+
+.pdf-preview-modal .modal-footer .btn {
+    min-width: 120px;
+}
+
+/* Mobile responsive for PDF preview */
+@media (max-width: 768px) {
+    .pdf-preview-modal .modal-content {
+        width: 98%;
+        height: 98%;
+        margin: 1vh auto;
+    }
+    
+    .pdf-preview-modal .modal-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .pdf-preview-modal .modal-footer .btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
 /* Image Upload */
 .image-upload-area {
     border: 2px dashed #e2e8f0;

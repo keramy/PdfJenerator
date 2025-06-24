@@ -248,6 +248,80 @@ class PDFGenerator {
         }
     }
 
+    async generateWorkOrderBlob(orderData) {
+        try {
+            // Ensure jsPDF is loaded before proceeding
+            let jsPDFConstructor;
+            
+            if (typeof window.ensureJsPDF === 'function') {
+                jsPDFConstructor = await window.ensureJsPDF();
+            } else if (typeof window.jsPDF !== 'undefined') {
+                jsPDFConstructor = window.jsPDF;
+            } else {
+                throw new Error('jsPDF library not loaded. Please refresh the page.');
+            }
+            
+            if (!jsPDFConstructor) {
+                throw new Error('jsPDF constructor not found');
+            }
+            
+            // Create new PDF document with UTF-8 support
+            this.doc = new jsPDFConstructor({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                putOnlyUsedFonts: true,
+                floatPrecision: 16
+            });
+            
+            // Configure for Turkish character support
+            this.doc.setCharSpace(0);
+            
+            // Add Turkish-compatible font (await for async font loading)
+            await this.setupTurkishFont();
+            
+            this.currentY = this.margin;
+
+            // Calculate total pages needed (10 items per page)
+            const itemsPerPage = 10;
+            const totalPages = Math.ceil(orderData.items.length / itemsPerPage);
+            
+            // Generate pages with pagination
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum > 1) {
+                    this.doc.addPage();
+                    this.currentY = this.margin;
+                }
+                
+                // Add header and order info on each page
+                this.addHeader(orderData, pageNum, totalPages);
+                this.addOrderInfo(orderData);
+                
+                // Get items for this page
+                const startIndex = (pageNum - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, orderData.items.length);
+                const pageItems = orderData.items.slice(startIndex, endIndex);
+                
+                // Add items for this page
+                this.addItemsForPage(pageItems, startIndex);
+                
+                // Footer includes signature (no separate summary needed)
+                this.addFooter(pageNum, totalPages);
+            }
+
+            // Return PDF as blob instead of downloading
+            const pdfBlob = this.doc.output('blob');
+            return {
+                blob: pdfBlob,
+                filename: `WorkOrder_${orderData.orderNumber}.pdf`
+            };
+            
+        } catch (error) {
+            console.error('PDF blob generation error:', error);
+            throw error;
+        }
+    }
+
     addHeader(orderData, pageNum = 1, totalPages = 1) {
         // Company header with improved Turkish support
         this.setFontStyle('bold', 22);
